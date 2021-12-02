@@ -9,23 +9,39 @@ import Foundation
 import UIKit
 
 
-struct Todo {
+class Todo {
+    init(content: String, toDoCategory: Todo.toDoCategory, isMarked: Bool = false, insertDate: Date = Date()) {
+        self.content = content
+        self.toDoCategory = toDoCategory
+        self.isMarked = isMarked
+        self.insertDate = insertDate
+    }
+    
     let content: String
-    let toDoCategory: toDoCategory 
-    let isHighlighted: Bool
+    let toDoCategory: toDoCategory
+    let isMarked: Bool
+    let insertDate: Date
     
     enum toDoCategory: String {
         case duty = "업무"
         case workout = "운동"
-        case study = "자기개발"
+        case study = "개인"
     }
-    
 }
+
+
 
 
 struct Category {
     let dayCategory: String
 }
+
+
+let categoryList = [
+    Category(dayCategory: "Today"),
+    Category(dayCategory: "ThisWeek"),
+    Category(dayCategory: "ThisMonth")
+]
 
 
 //

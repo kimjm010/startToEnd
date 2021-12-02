@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import DropDown
 
 
 class ViewController: UIViewController {
@@ -17,6 +18,10 @@ class ViewController: UIViewController {
     @IBOutlet weak var composeToDoContainerViewBottomConstraint: NSLayoutConstraint!
     
     @IBOutlet weak var composeTabBar: UITabBar!
+    
+    @IBOutlet weak var selectCalenderButton: UIButton!
+    
+    @IBOutlet weak var selectToDoCategoryButton: UIButton!
     
     // searchBar의 상태 확인
     var isSearchBarEmpty: Bool {
@@ -40,34 +45,79 @@ class ViewController: UIViewController {
     // 검색문자열을 일시적으로 저장할 속성
     var cachedText: String?
     
+    // mark 상태를 저장
+    var isMarked: Bool = false
+    
+    // 완료 상태를 저장
+    var isCompleted: Bool = false
+    
+    lazy var menu: DropDown? = {
+        let menu = DropDown()
+        menu.dataSource = ["업무", "개인", "운동"]
+        return menu
+    }()
     
     
     // MARK: 더미데이터, 추후에 삭제하고 코어데이터로 업데이트 예정
     var todayList = [
-        Todo(content: "오늘, 1번 목록입니다.", toDoCategory: .duty, isHighlighted: false),
-        Todo(content: "오늘, 2번 목록입니다.", toDoCategory: .study, isHighlighted: false),
-        Todo(content: "오늘, 3번 목록입니다.", toDoCategory: .workout, isHighlighted: false)
+        Todo(content: "오늘, 1번 목록입니다.",
+             toDoCategory: .duty,
+             isMarked: false,
+             insertDate: Date()),
+        
+        Todo(content: "오늘, 2번 목록입니다.",
+             toDoCategory: .study,
+             isMarked: false,
+             insertDate: Date().addingTimeInterval(-100)),
+        
+        Todo(content: "오늘, 3번 목록입니다.",
+             toDoCategory: .workout,
+             isMarked: false,
+             insertDate: Date().addingTimeInterval(-200))
     ]
     
     var thisWeekList = [
-        Todo(content: "이번 주, 1번 목록입니다.", toDoCategory: .duty, isHighlighted: false),
-        Todo(content: "이번 주, 2번 목록입니다.", toDoCategory: .study, isHighlighted: false),
-        Todo(content: "이번 주, 3번 목록입니다.", toDoCategory: .workout, isHighlighted: false)
+        Todo(content: "이번 주, 1번 목록입니다.",
+             toDoCategory: .duty,
+             isMarked: false,
+             insertDate: Date().addingTimeInterval(-100)),
+        
+        Todo(content: "이번 주, 2번 목록입니다.",
+             toDoCategory: .study,
+             isMarked: false,
+             insertDate: Date().addingTimeInterval(-200)),
+        
+        Todo(content: "이번 주, 3번 목록입니다.",
+             toDoCategory: .workout,
+             isMarked: false,
+             insertDate: Date().addingTimeInterval(-300))
     ]
     
     var thisMonthList = [
-        Todo(content: "이번 달, 1번 목록입니다.", toDoCategory: .duty, isHighlighted: false),
-        Todo(content: "이번 달, 2번 목록입니다.", toDoCategory: .study, isHighlighted: false),
-        Todo(content: "이번 달, 3번 목록입니다.", toDoCategory: .workout, isHighlighted: false)
+        Todo(content: "이번 달, 1번 목록입니다.",
+             toDoCategory: .duty,
+             isMarked: false,
+             insertDate: Date().addingTimeInterval(-300)),
+        
+        Todo(content: "이번 달, 2번 목록입니다.",
+             toDoCategory: .study,
+             isMarked: false,
+             insertDate: Date().addingTimeInterval(-400)),
+        
+        Todo(content: "이번 달, 3번 목록입니다.",
+             toDoCategory: .workout,
+             isMarked: false,
+             insertDate: Date().addingTimeInterval(-500))
     ]
     
-    let categoryList = [
-        Category(dayCategory: "Today"),
-        Category(dayCategory: "ThisWeek"),
-        Category(dayCategory: "ThisMonth")
-    ]
     
-    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let cell = sender as? UITableViewCell, let indexPath = toDoListTableView.indexPath(for: cell) {
+            if let vc = segue.destination as? DetailViewController {
+                vc.todo = displayedList[indexPath.row]
+            }
+        }
+    }
     
     
     @IBAction func showMenu(_ sender: Any) {
@@ -75,12 +125,34 @@ class ViewController: UIViewController {
     }
     
     
+    @IBAction func toggleComplete(_ sender: UIButton) {
+        print(#function)
+    }
+    
+    
+    @IBAction func toggleMark(_ sender: Any) {
+        print(#function)
+    }
+    
+    
+    @IBAction func showCalendar(_ sender: Any) {
+        print(#function)
+        // TODO: AddSubView 강의 듣고 문제 해결하기
+    }
+    
+    
+    @IBAction func showToDoCategoryList(_ sender: Any) {
+        print(#function)
+        // TODO: AddSubView 강의 듣고 문제 해결하기
+    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         displayedList = todayList
-        toDoTextField.becomeFirstResponder()
+        selectCalenderButton.setTitle("", for: .normal)
+        selectToDoCategoryButton.setTitle("", for: .normal)
         
         setupSearchController()
         
@@ -91,9 +163,7 @@ class ViewController: UIViewController {
             
             if let frame = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
                 let height = frame.height
-                
                 let tabBarHeight = self.composeTabBar.frame.height
-                
                 self.composeToDoContainerViewBottomConstraint.constant = height - tabBarHeight
             }
         }
@@ -141,7 +211,8 @@ extension ViewController: UITableViewDataSource {
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ListTableViewCell", for: indexPath) as! ListTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ListTableViewCell",
+                                                 for: indexPath) as! ListTableViewCell
         
         var target: Todo
         
@@ -155,9 +226,13 @@ extension ViewController: UITableViewDataSource {
     }
     
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView,
+                   commit editingStyle: UITableViewCell.EditingStyle,
+                   forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            print(#function, indexPath.row, indexPath.section)
+            displayedList.remove(at: indexPath.row)
+            toDoListTableView.deleteRows(at: [indexPath], with: .automatic)
+            toDoListTableView.reloadRows(at: [indexPath], with: .automatic)
         }
     }
 }
@@ -168,7 +243,6 @@ extension ViewController: UITableViewDataSource {
 extension ViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(#function, indexPath.section, indexPath.row)
         toDoListTableView.deselectRow(at: indexPath, animated: true)
     }
 }
@@ -182,7 +256,8 @@ extension ViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryListCollectionViewCell", for: indexPath) as! CategoryListCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryListCollectionViewCell",
+                                                      for: indexPath) as! CategoryListCollectionViewCell
         
         let target = categoryList[indexPath.row]
         cell.configure(category: target)
@@ -215,7 +290,9 @@ extension ViewController: UICollectionViewDelegate {
 
 
 extension ViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
         guard let layout = collectionViewLayout as? UICollectionViewFlowLayout else {
             return .zero
         }
@@ -274,6 +351,10 @@ extension ViewController: UISearchBarDelegate {
 
 extension ViewController: UITextFieldDelegate {
     
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.becomeFirstResponder()
+    }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
         if textField == toDoTextField {
@@ -283,7 +364,7 @@ extension ViewController: UITextFieldDelegate {
             }
             
             // TODO: Category 정할 수 있게 하기!
-            let newToDo = Todo(content: content, toDoCategory: .workout, isHighlighted: false)
+            let newToDo = Todo(content: content, toDoCategory: .workout, isMarked: false, insertDate: Date())
             displayedList.insert(newToDo, at: 0)
             toDoListTableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
         }

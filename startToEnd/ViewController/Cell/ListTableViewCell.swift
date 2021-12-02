@@ -13,15 +13,23 @@ class ListTableViewCell: UITableViewCell {
     
     @IBOutlet weak var categoryLabel: UILabel!
     
+    @IBOutlet weak var dateLabel: UILabel!
+
+    @IBOutlet weak var toggleCompleteButton: UIButton!
+    
+    @IBOutlet weak var markHighlightButton: UIButton!
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        
+        toggleCompleteButton.setTitle("", for: .normal)
+        markHighlightButton.setTitle("", for: .normal)
     }
-
+    
     
     func configure(todo: Todo) {
         toDoLabel.text = todo.content
         categoryLabel.text = todo.toDoCategory.rawValue
+        dateLabel.text = todo.insertDate.dateToString
     }
 }
