@@ -9,15 +9,15 @@ import UIKit
 import DropDown
 
 
-extension Notification {
+extension NSNotification.Name {
     static let updateToDo = Notification.Name(rawValue: "updateToDo")
 }
 
 class DetailViewController: UIViewController {
 
-    @IBOutlet weak var contentLabel: UILabel!
+    @IBOutlet weak var contentTextField: UITextField!
     
-    @IBOutlet weak var toggleMarkButton: UIButton!
+    @IBOutlet weak var MarkedImageView: UIImageView!
     
     @IBOutlet weak var changeCategoryButton: UIButton!
     
@@ -29,36 +29,83 @@ class DetailViewController: UIViewController {
     
     @IBOutlet weak var detailTextViewPlaceholder: UILabel!
     
+    @IBOutlet weak var toggleIsMarkedButton: UIButton!
+    
     /// todo 데이터 저장 속성
-    var todo: Todo?
+    var selectedTodo: Todo?
     
     /// todoCategory 저장 속성
     var toDoCategory: Todo.toDoCategory?
     
-    /// Mark표시 저장 속성
-    var isMarked: Bool?
-    
     /// DropDown메뉴 표시 속성
     lazy var menu: DropDown? = {
        let menu = DropDown()
-        // TODO: 데이터 넣는 방법 수정할 것
-        menu.dataSource = ["업무", "개인", "운동"]
+        menu.dataSource = [
+            Todo.toDoCategory.duty.rawValue,
+            Todo.toDoCategory.study.rawValue,
+            Todo.toDoCategory.workout.rawValue
+        ]
         return menu
     }()
     
     
+    /// MarkImageView를 토글합니다.
+    /// - Parameter sender: toggleIsMarkedButton
     @IBAction func toggleMark(_ sender: UIButton) {
-        print(#function)
-        guard var isMarked = isMarked else { return }
+        guard let selectedTodo = selectedTodo else { return }
 
-        isMarked = true
         
-        if isMarked {
-            toggleMarkButton.setImage(UIImage(systemName: "star.fill"), for: .highlighted)
+        if !(selectedTodo.isMarked) {
+            MarkedImageView.isHighlighted = true
+            selectedTodo.isMarked = true
         } else {
-            toggleMarkButton.setImage(UIImage(systemName: "star"), for: .normal)
+            MarkedImageView.isHighlighted = false
+            selectedTodo.isMarked = false
         }
     }
+    
+    
+    @IBAction func closeVC(_ sender: Any) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    
+    @IBAction func updateSelectedToDo(_ sender: Any) {
+        dismiss(animated: true, completion: nil)
+        
+        guard let selectedTodo = selectedTodo else { return }
+        
+        let userInfo = ["updated": selectedTodo]
+        NotificationCenter.default.post(name: .updateToDo, object: nil, userInfo: userInfo)
+    }
+    
+    
+    /// 카테고리를 변경합니다.
+    /// - Parameter sender: category 변경 버튼
+    @IBAction func changeCategory(_ sender: UIButton) {
+        menu?.show()
+        menu?.anchorView = sender
+        guard let height = menu?.anchorView?.plainView.bounds.height else { return }
+        menu?.bottomOffset = CGPoint(x: 0, y: height)
+        menu?.width = view.frame.width / 2
+        menu?.backgroundColor = UIColor.systemGray6
+        menu?.textColor = .label
+        menu?.selectionAction = { [weak self] (index: Int, item: Todo.toDoCategory.RawValue) in
+            self?.toDoCategoryLabel.text = item
+            
+            switch item {
+            case "업무":
+                self?.selectedTodo?.toDoCategory = .duty
+            case "개인":
+                self?.selectedTodo?.toDoCategory = .study
+            case "운동":
+                self?.selectedTodo?.toDoCategory = .workout
+            default:
+                break
+            }
+        }
+    }
+    
     
     
     
@@ -66,11 +113,10 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
         
         changeCategoryButton.contentHorizontalAlignment = .leading
-        contentLabel.text = todo?.content
-        dateTimeLabel.text = todo?.insertDate.dateToString
-        isMarked = todo?.isMarked
-        toggleMarkButton.setTitle("", for: .normal )
+        contentTextField.text = selectedTodo?.content
+        dateTimeLabel.text = selectedTodo?.insertDate.dateToString
         detailTextView.isHidden = false
+        toggleIsMarkedButton.setTitle("", for: .normal)
         
         
         NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { [weak self] (noti) in
@@ -100,21 +146,11 @@ class DetailViewController: UIViewController {
     }
     
     
-    /// 카테고리를 변경합니다.
-    /// - Parameter sender: category 변경 버튼
-    @IBAction func changeCategory(_ sender: UIButton) {
-        menu?.show()
-        menu?.anchorView = sender
-        guard let height = menu?.anchorView?.plainView.bounds.height else { return }
-        menu?.bottomOffset = CGPoint(x: 0, y: height)
-        menu?.width = view.frame.width / 2
-        menu?.backgroundColor = UIColor.systemGray6
-        menu?.textColor = .label
-        menu?.selectionAction = { [weak self] (index: Int, item: String) in
-            self?.toDoCategoryLabel.text = item
-        }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
     }
     
+   
 }
 
 
@@ -127,7 +163,6 @@ extension DetailViewController: UITextViewDelegate {
     }
     
     
-    
     func textViewDidEndEditing(_ textView: UITextView) {
         guard let content = textView.text, content.count > 0 else {
             detailTextViewPlaceholder.isHidden = false
@@ -136,5 +171,16 @@ extension DetailViewController: UITextViewDelegate {
         
         detailTextViewPlaceholder.isHidden = true
         print(content)
+    }
+}
+
+
+
+
+extension DetailViewController: UITextFieldDelegate {
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        guard let content = textField.text, content.count > 0 else { return }
+        
+        selectedTodo?.content = content
     }
 }

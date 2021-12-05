@@ -11,17 +11,17 @@ import DropDown
 
 class ViewController: UIViewController {
     
+    @IBOutlet weak var composeToDoContainerViewBottomConstraint: NSLayoutConstraint!
+    
+    @IBOutlet weak var selectToDoCategoryButton: UIButton!
+    
+    @IBOutlet weak var selectCalenderButton: UIButton!
+    
     @IBOutlet weak var toDoListTableView: UITableView!
     
     @IBOutlet weak var toDoTextField: UITextField!
     
-    @IBOutlet weak var composeToDoContainerViewBottomConstraint: NSLayoutConstraint!
-    
     @IBOutlet weak var composeTabBar: UITabBar!
-    
-    @IBOutlet weak var selectCalenderButton: UIButton!
-    
-    @IBOutlet weak var selectToDoCategoryButton: UIButton!
     
     // searchBar의 상태 확인
     var isSearchBarEmpty: Bool {
@@ -51,9 +51,19 @@ class ViewController: UIViewController {
     // 완료 상태를 저장
     var isCompleted: Bool = false
     
+    var dayCategory: Category.dayOption?
+    
+    var toDoCategory: Todo.toDoCategory?
+    
+    var selectedToDo: Todo?
+    
     lazy var menu: DropDown? = {
         let menu = DropDown()
-        menu.dataSource = ["업무", "개인", "운동"]
+        menu.dataSource = [
+            Todo.toDoCategory.duty.rawValue,
+            Todo.toDoCategory.study.rawValue,
+            Todo.toDoCategory.workout.rawValue
+        ]
         return menu
     }()
     
@@ -113,8 +123,8 @@ class ViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let cell = sender as? UITableViewCell, let indexPath = toDoListTableView.indexPath(for: cell) {
-            if let vc = segue.destination as? DetailViewController {
-                vc.todo = displayedList[indexPath.row]
+            if let vc = segue.destination.children.first as? DetailViewController {
+                vc.selectedTodo = displayedList[indexPath.row]
             }
         }
     }
@@ -130,25 +140,49 @@ class ViewController: UIViewController {
     }
     
     
-    @IBAction func toggleMark(_ sender: Any) {
-        print(#function)
-    }
-    
-    
     @IBAction func showCalendar(_ sender: Any) {
         print(#function)
-        // TODO: AddSubView 강의 듣고 문제 해결하기
+        
+        let frame = CGRect(x: 0, y: view.frame.height / 2, width: 100, height: 100)
+        let v = UIView(frame: frame)
+        view.addSubview(v)
+        
+        v.backgroundColor = UIColor.systemPink
+        
+        
     }
     
     
-    @IBAction func showToDoCategoryList(_ sender: Any) {
+    @IBAction func showToDoCategoryList(_ sender: UIButton) {
         print(#function)
-        // TODO: AddSubView 강의 듣고 문제 해결하기
+        createView()
+//        menu?.show()
+//        menu?.anchorView = sender
+//        guard let height = menu?.anchorView?.plainView.bounds.height else { return }
+//        menu?.bottomOffset = CGPoint(x: 0, y: -height)
+//        menu?.width = view.frame.width / 2
+//        menu?.backgroundColor = UIColor.systemGray6
+//        menu?.textColor = .label
+//        menu?.selectionAction = { [weak self] (_, item) in
+//
+//        }
+    }
+    
+    
+    func createView() {
+        
+        let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+        
+        let v = UIView(frame: frame)
+        
+        view.addSubview(v)
     }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        print(view.bounds.origin.x + view.frame.width / 2, view.bounds.origin.y + view.frame.height / 2)
         
         displayedList = todayList
         selectCalenderButton.setTitle("", for: .normal)
@@ -176,6 +210,16 @@ class ViewController: UIViewController {
             
             self.composeToDoContainerViewBottomConstraint.constant = 0
         }
+        
+    
+        NotificationCenter.default.addObserver(forName: .updateToDo, object: nil, queue: .main) { [weak self] (noti) in
+            guard let newToDo = noti.userInfo?["updated"] as? Todo else { return }
+            
+            print(newToDo.content, newToDo.isMarked, newToDo.toDoCategory.rawValue)
+            self?.toDoListTableView.reloadData()
+        }
+    
+    
     }
     
     

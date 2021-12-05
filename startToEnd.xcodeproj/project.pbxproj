@@ -20,6 +20,8 @@
 		F5A4083127546F6E00F08378 /* CategoryListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A4083027546F6E00F08378 /* CategoryListCollectionViewCell.swift */; };
 		F5A4B33D27584E6800DC415B /* Date+Formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A4B33C27584E6800DC415B /* Date+Formatter.swift */; };
 		F5A4B33F2758914600DC415B /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A4B33E2758914600DC415B /* Common.swift */; };
+		F5A4B341275A06BA00DC415B /* SelectCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A4B340275A06BA00DC415B /* SelectCategoryViewController.swift */; };
+		F5A4B343275A06E100DC415B /* SelectCategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A4B342275A06E100DC415B /* SelectCategoryTableViewCell.swift */; };
 		F5E11BA72755D894007C582A /* ListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E11BA62755D894007C582A /* ListTableViewCell.swift */; };
 		F5E189CD2756B4E100DCC300 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E189CC2756B4E100DCC300 /* UIViewController+Alert.swift */; };
 /* End PBXBuildFile section */
@@ -42,6 +44,8 @@
 		F5A4083027546F6E00F08378 /* CategoryListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListCollectionViewCell.swift; sourceTree = "<group>"; };
 		F5A4B33C27584E6800DC415B /* Date+Formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Formatter.swift"; sourceTree = "<group>"; };
 		F5A4B33E2758914600DC415B /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
+		F5A4B340275A06BA00DC415B /* SelectCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCategoryViewController.swift; sourceTree = "<group>"; };
+		F5A4B342275A06E100DC415B /* SelectCategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCategoryTableViewCell.swift; sourceTree = "<group>"; };
 		F5E11BA62755D894007C582A /* ListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTableViewCell.swift; sourceTree = "<group>"; };
 		F5E189CC2756B4E100DCC300 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -124,6 +128,7 @@
 			children = (
 				F5388E7A2751FBF5005426D1 /* ViewController.swift */,
 				F51517A7275783B90024266F /* DetailViewController.swift */,
+				F5A4B340275A06BA00DC415B /* SelectCategoryViewController.swift */,
 				F5388E93275218B2005426D1 /* Cell */,
 			);
 			path = ViewController;
@@ -134,6 +139,7 @@
 			children = (
 				F5A4083027546F6E00F08378 /* CategoryListCollectionViewCell.swift */,
 				F5E11BA62755D894007C582A /* ListTableViewCell.swift */,
+				F5A4B342275A06E100DC415B /* SelectCategoryTableViewCell.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -275,7 +281,9 @@
 				F5E11BA72755D894007C582A /* ListTableViewCell.swift in Sources */,
 				F5A4083127546F6E00F08378 /* CategoryListCollectionViewCell.swift in Sources */,
 				F5A4B33F2758914600DC415B /* Common.swift in Sources */,
+				F5A4B343275A06E100DC415B /* SelectCategoryTableViewCell.swift in Sources */,
 				F5388E8F27521758005426D1 /* Model.swift in Sources */,
+				F5A4B341275A06BA00DC415B /* SelectCategoryViewController.swift in Sources */,
 				F5388E7B2751FBF5005426D1 /* ViewController.swift in Sources */,
 				F5388E772751FBF5005426D1 /* AppDelegate.swift in Sources */,
 				F5388E792751FBF5005426D1 /* SceneDelegate.swift in Sources */,
