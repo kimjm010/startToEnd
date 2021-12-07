@@ -13,6 +13,8 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var composeToDoContainerViewBottomConstraint: NSLayoutConstraint!
     
+    @IBOutlet weak var cancelSelectedCategoryButton: UIButton!
+    
     @IBOutlet weak var selectToDoCategoryButton: UIButton!
     
     @IBOutlet weak var selectCalenderButton: UIButton!
@@ -23,108 +25,48 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var composeTabBar: UITabBar!
     
-    // searchBar의 상태 확인
+    @IBOutlet weak var composeContainerView: UIView!
+    
+    /// searchBar의 상태 확인
     var isSearchBarEmpty: Bool {
         return searchController.searchBar.text?.isEmpty ?? true
     }
     
-    // 필터링 확인 속성
+    /// 필터링 확인 속성
     var isFiltering: Bool {
         return searchController.isActive && !isSearchBarEmpty
     }
 
-    // 검색을 관리하는 객체
+    /// 검색을 관리하는 객체
     let searchController = UISearchController(searchResultsController: nil)
     
-    // 화면에 표시할 배열
-    var displayedList = [Todo]()
-    
-    // filtering된 요소를 저장할 배열
-    var filteredToDoList = [Todo]()
-    
-    // 검색문자열을 일시적으로 저장할 속성
+    /// 검색문자열을 일시적으로 저장할 속성
     var cachedText: String?
     
-    // mark 상태를 저장
+    /// mark 상태 저장 속성
     var isMarked: Bool = false
     
-    // 완료 상태를 저장
+    /// 완료 상태 저장 속성
     var isCompleted: Bool = false
     
-    var dayCategory: Category.dayOption?
+    /// category 저장 속성
+    var selectedCategory: Category2?
     
-    var toDoCategory: Todo.toDoCategory?
+    /// 화면에 표시할 배열
+    var displayedList = [Todo1]()
     
-    var selectedToDo: Todo?
+    /// filtering된 요소를 저장할 배열
+    var filteredList = [Todo1]()
     
-    lazy var menu: DropDown? = {
-        let menu = DropDown()
-        menu.dataSource = [
-            Todo.toDoCategory.duty.rawValue,
-            Todo.toDoCategory.study.rawValue,
-            Todo.toDoCategory.workout.rawValue
-        ]
-        return menu
-    }()
-    
-    
-    // MARK: 더미데이터, 추후에 삭제하고 코어데이터로 업데이트 예정
-    var todayList = [
-        Todo(content: "오늘, 1번 목록입니다.",
-             toDoCategory: .duty,
-             isMarked: false,
-             insertDate: Date()),
-        
-        Todo(content: "오늘, 2번 목록입니다.",
-             toDoCategory: .study,
-             isMarked: false,
-             insertDate: Date().addingTimeInterval(-100)),
-        
-        Todo(content: "오늘, 3번 목록입니다.",
-             toDoCategory: .workout,
-             isMarked: false,
-             insertDate: Date().addingTimeInterval(-200))
-    ]
-    
-    var thisWeekList = [
-        Todo(content: "이번 주, 1번 목록입니다.",
-             toDoCategory: .duty,
-             isMarked: false,
-             insertDate: Date().addingTimeInterval(-100)),
-        
-        Todo(content: "이번 주, 2번 목록입니다.",
-             toDoCategory: .study,
-             isMarked: false,
-             insertDate: Date().addingTimeInterval(-200)),
-        
-        Todo(content: "이번 주, 3번 목록입니다.",
-             toDoCategory: .workout,
-             isMarked: false,
-             insertDate: Date().addingTimeInterval(-300))
-    ]
-    
-    var thisMonthList = [
-        Todo(content: "이번 달, 1번 목록입니다.",
-             toDoCategory: .duty,
-             isMarked: false,
-             insertDate: Date().addingTimeInterval(-300)),
-        
-        Todo(content: "이번 달, 2번 목록입니다.",
-             toDoCategory: .study,
-             isMarked: false,
-             insertDate: Date().addingTimeInterval(-400)),
-        
-        Todo(content: "이번 달, 3번 목록입니다.",
-             toDoCategory: .workout,
-             isMarked: false,
-             insertDate: Date().addingTimeInterval(-500))
-    ]
+    /// 선택된 ToDo 항목
+    var selectedToDo: Todo1?
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let cell = sender as? UITableViewCell, let indexPath = toDoListTableView.indexPath(for: cell) {
             if let vc = segue.destination.children.first as? DetailViewController {
-                vc.selectedTodo = displayedList[indexPath.row]
+                vc.reallySelectedTodo = displayedList[indexPath.row]
+                vc.selectedCategoryRawvalue = displayedList[indexPath.row].category.categoryName
             }
         }
     }
@@ -132,6 +74,7 @@ class ViewController: UIViewController {
     
     @IBAction func showMenu(_ sender: Any) {
         print(#function)
+        // TODO: 테이블 뷰 정렬 수동으로 바꿀 수 있게 -> Editing, move
     }
     
     
@@ -142,52 +85,23 @@ class ViewController: UIViewController {
     
     @IBAction func showCalendar(_ sender: Any) {
         print(#function)
-        
-        let frame = CGRect(x: 0, y: view.frame.height / 2, width: 100, height: 100)
-        let v = UIView(frame: frame)
-        view.addSubview(v)
-        
-        v.backgroundColor = UIColor.systemPink
-        
-        
+        // TODO: Calendar view 그려서 표시하기
     }
     
     
-    @IBAction func showToDoCategoryList(_ sender: UIButton) {
-        print(#function)
-        createView()
-//        menu?.show()
-//        menu?.anchorView = sender
-//        guard let height = menu?.anchorView?.plainView.bounds.height else { return }
-//        menu?.bottomOffset = CGPoint(x: 0, y: -height)
-//        menu?.width = view.frame.width / 2
-//        menu?.backgroundColor = UIColor.systemGray6
-//        menu?.textColor = .label
-//        menu?.selectionAction = { [weak self] (_, item) in
-//
-//        }
-    }
-    
-    
-    func createView() {
-        
-        let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
-        
-        let v = UIView(frame: frame)
-        
-        view.addSubview(v)
+    @IBAction func cancelSelectedCategory(_ sender: Any) {
+        UIView.animate(withDuration: 0.3) {
+            // TODO: Animation 자연스럽게 없애기
+            self.cancelSelectedCategoryButton.isHidden = true
+            self.selectToDoCategoryButton.isHidden = false
+        }
     }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        print(view.bounds.origin.x + view.frame.width / 2, view.bounds.origin.y + view.frame.height / 2)
-        
-        displayedList = todayList
-        selectCalenderButton.setTitle("", for: .normal)
-        selectToDoCategoryButton.setTitle("", for: .normal)
-        
+        initializeData()
         setupSearchController()
         
         NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification,
@@ -213,27 +127,50 @@ class ViewController: UIViewController {
         
     
         NotificationCenter.default.addObserver(forName: .updateToDo, object: nil, queue: .main) { [weak self] (noti) in
-            guard let newToDo = noti.userInfo?["updated"] as? Todo else { return }
+            //guard let newToDo = noti.userInfo?["updated"] as? Todo else { return }
+            guard let newToDo = noti.userInfo?["updated"] as? Todo1 else { return }
             
-            print(newToDo.content, newToDo.isMarked, newToDo.toDoCategory.rawValue)
+            print(newToDo.content, newToDo.isMarked, newToDo.category.categoryName)
             self?.toDoListTableView.reloadData()
         }
-    
-    
+        
+        
+        NotificationCenter.default.addObserver(forName: .selectCategory, object: nil, queue: .main) { [weak self] (noti) in
+            guard let selectedCategory = noti.userInfo?["select"] as? Category2 else { return }
+            self?.cancelSelectedCategoryButton.isHidden = false
+            self?.selectToDoCategoryButton.isHidden = true
+            self?.cancelSelectedCategoryButton.setTitle("\(selectedCategory)", for: .normal)
+            self?.selectedCategory = selectedCategory
+        }
     }
     
     
+    /// 데이터를 초기화합니다.
+    func initializeData() {
+        displayedList = dummyToDoList
+        cancelSelectedCategoryButton.isHidden = true
+        composeContainerView.layer.cornerRadius = 14
+        selectCalenderButton.setTitle("", for: .normal)
+        selectToDoCategoryButton.setTitle("", for: .normal)
+        cancelSelectedCategoryButton.setTitle("", for: .normal)
+    }
+    
+    
+    /// searchController를 초기화 합니다.
     func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "지난 계획을 검색하세요 :)"
         navigationItem.searchController = searchController
         definesPresentationContext = true
+        selectToDoCategoryButton.configureStyle(with: [.pillShape])
     }
     
     
+    /// 검색어를 통해 필터링합니다.
+    /// - Parameter searchText: 입력된 검색어
     func filterContentForSearchText(_ searchText: String) {
-        filteredToDoList = displayedList.filter { (todo) -> Bool in
+        filteredList = displayedList.filter { (todo) -> Bool in
             return todo.content.lowercased().contains(searchText.lowercased())
         }
         
@@ -248,8 +185,9 @@ extension ViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if isFiltering {
-            return filteredToDoList.count
+            return filteredList.count
         }
+        
         return displayedList.count
     }
     
@@ -258,14 +196,15 @@ extension ViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ListTableViewCell",
                                                  for: indexPath) as! ListTableViewCell
         
-        var target: Todo
+        var reallyTarget: Todo1
         
         if isFiltering {
-            target = filteredToDoList[indexPath.row]
+            reallyTarget = filteredList[indexPath.row]
         } else {
-            target = displayedList[indexPath.row]
+            reallyTarget = displayedList[indexPath.row]
         }
-        cell.configure(todo: target)
+        
+        cell.reallyConfigure(todo1: reallyTarget)
         return cell
     }
     
@@ -289,22 +228,33 @@ extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         toDoListTableView.deselectRow(at: indexPath, animated: true)
     }
+    
+    
+    func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        return IndexPath(row: 0, section: 0)
+    }
 }
 
 
 
 
 extension ViewController: UICollectionViewDataSource {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return categoryList.count
     }
     
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryListCollectionViewCell",
                                                       for: indexPath) as! CategoryListCollectionViewCell
-        
+
         let target = categoryList[indexPath.row]
         cell.configure(category: target)
+        
+        if indexPath.item % 2 == 0 {
+            cell.backgroundColor = UIColor.systemGray5
+        }
         return cell
     }
 }
@@ -313,17 +263,12 @@ extension ViewController: UICollectionViewDataSource {
 
 
 extension ViewController: UICollectionViewDelegate {
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print(#function, indexPath.item)
         switch indexPath.item {
-        case 0:
-            displayedList = todayList
-        case 1:
-            displayedList = thisWeekList
-        case 2:
-            displayedList = thisMonthList
         default:
-            displayedList = todayList
+            displayedList
         }
         
         toDoListTableView.reloadData()
@@ -334,6 +279,7 @@ extension ViewController: UICollectionViewDelegate {
 
 
 extension ViewController: UICollectionViewDelegateFlowLayout {
+    
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -349,7 +295,7 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
         switch layout.scrollDirection {
         case .horizontal:
             height = 50
-            width = (width - (layout.minimumInteritemSpacing * 2)) / 3
+            width = (width - (layout.minimumLineSpacing * 2)) / 3
         default:
             break
         }
@@ -362,6 +308,7 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
 
 
 extension ViewController: UISearchResultsUpdating {
+    
     func updateSearchResults(for searchController: UISearchController) {
         let searchBar = searchController.searchBar
         guard let text = searchBar.text else { return }
@@ -380,10 +327,12 @@ extension ViewController: UISearchBarDelegate {
         cachedText = searchText
     }
     
+    
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        guard let text = cachedText, !(text.isEmpty || filteredToDoList.isEmpty) else { return }
+        guard let text = cachedText, !(text.isEmpty || filteredList.isEmpty) else { return }
         searchController.searchBar.text = text
     }
+    
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchController.isActive = true
@@ -399,21 +348,28 @@ extension ViewController: UITextFieldDelegate {
         textField.becomeFirstResponder()
     }
     
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        
         if textField == toDoTextField {
             guard let content = textField.text, content.count > 0 else {
-                alertNoText(title: "알림", message: "오늘의 계획을 입력하지 않으셨군요!", handler: nil)
+                alertNoText(title: "알림", message: "오늘의 계획을 입력해주세요 :)", handler: nil)
                 return false
             }
             
-            // TODO: Category 정할 수 있게 하기!
-            let newToDo = Todo(content: content, toDoCategory: .workout, isMarked: false, insertDate: Date())
+            guard let selectedCategory = selectedCategory else { return false }
+            
+            // TODO: Category Forced Unwrapping을 벗겨내야해
+            let newToDo = Todo1(content: content, insertDate: Date(), category: Category1(categoryName: selectedCategory), isMarked: false, isCompleted: false)
+            
             displayedList.insert(newToDo, at: 0)
             toDoListTableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
         }
+        
         toDoTextField.text = nil
-
+        selectedCategory = nil
+        cancelSelectedCategoryButton.isHidden = true
+        selectToDoCategoryButton.isHidden = false
+        
         return true
     }
 }

@@ -1012,9 +1012,9 @@ extension DropDown {
 
 	/// Returns the selected item.
 	public var selectedItem: String? {
-		guard let row = (tableView.indexPathForSelectedRow as NSIndexPath?)?.row else { return nil }
+        guard let row = (tableView.indexPathForSelectedRow as NSIndexPath?)?.row else { return nil }
 
-		return dataSource[row]
+        return dataSource[row]
 	}
 
 	/// Returns the height needed to display all cells.

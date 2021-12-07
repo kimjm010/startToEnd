@@ -7,9 +7,11 @@
 
 import UIKit
 
+
 class CategoryListCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var categoryLabel: UILabel!
+    
     
     func configure(category: Category) {
         categoryLabel.text = category.dayCategory

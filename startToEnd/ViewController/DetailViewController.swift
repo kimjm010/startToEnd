@@ -9,58 +9,46 @@ import UIKit
 import DropDown
 
 
-extension NSNotification.Name {
-    static let updateToDo = Notification.Name(rawValue: "updateToDo")
-}
-
 class DetailViewController: UIViewController {
+    
+    @IBOutlet weak var detailTextViewPlaceholder: UILabel!
+    
+    @IBOutlet weak var categoryPickerView: UIPickerView!
+    
+    
+    @IBOutlet weak var toggleIsMarkedButton: UIButton!
 
     @IBOutlet weak var contentTextField: UITextField!
     
     @IBOutlet weak var MarkedImageView: UIImageView!
     
-    @IBOutlet weak var changeCategoryButton: UIButton!
-    
-    @IBOutlet weak var toDoCategoryLabel: UILabel!
+    @IBOutlet weak var detailTextView: UITextView!
     
     @IBOutlet weak var dateTimeLabel: UILabel!
     
-    @IBOutlet weak var detailTextView: UITextView!
-    
-    @IBOutlet weak var detailTextViewPlaceholder: UILabel!
-    
-    @IBOutlet weak var toggleIsMarkedButton: UIButton!
-    
     /// todo 데이터 저장 속성
-    var selectedTodo: Todo?
+    var reallySelectedTodo: Todo1?
     
-    /// todoCategory 저장 속성
-    var toDoCategory: Todo.toDoCategory?
+    /// category 배열
+    var categoryList = Category2.allCases
     
-    /// DropDown메뉴 표시 속성
-    lazy var menu: DropDown? = {
-       let menu = DropDown()
-        menu.dataSource = [
-            Todo.toDoCategory.duty.rawValue,
-            Todo.toDoCategory.study.rawValue,
-            Todo.toDoCategory.workout.rawValue
-        ]
-        return menu
-    }()
+    /// 선택된 toDoList의 카테고리 속성
+    var selectedCategoryRawvalue: Category2?
     
     
     /// MarkImageView를 토글합니다.
     /// - Parameter sender: toggleIsMarkedButton
     @IBAction func toggleMark(_ sender: UIButton) {
-        guard let selectedTodo = selectedTodo else { return }
+        //guard let selectedTodo = selectedTodo else { return }
+        guard let reallySelectedTodo = reallySelectedTodo else { return }
 
-        
-        if !(selectedTodo.isMarked) {
+
+        if !(reallySelectedTodo.isMarked) {
             MarkedImageView.isHighlighted = true
-            selectedTodo.isMarked = true
+            reallySelectedTodo.isMarked = true
         } else {
             MarkedImageView.isHighlighted = false
-            selectedTodo.isMarked = false
+            reallySelectedTodo.isMarked = false
         }
     }
     
@@ -71,53 +59,34 @@ class DetailViewController: UIViewController {
     
     
     @IBAction func updateSelectedToDo(_ sender: Any) {
+        
+        //guard let selectedTodo = selectedTodo else { return }
+        guard let reallySelectedTodo = reallySelectedTodo else { return }
+        
+        //let userInfo = ["updated": selectedTodo]
+        let reallyUserInfo = ["updated": reallySelectedTodo]
+        //NotificationCenter.default.post(name: .updateToDo, object: nil, userInfo: userInfo)
+        NotificationCenter.default.post(name: .updateToDo, object: nil, userInfo: reallyUserInfo)
+        
         dismiss(animated: true, completion: nil)
-        
-        guard let selectedTodo = selectedTodo else { return }
-        
-        let userInfo = ["updated": selectedTodo]
-        NotificationCenter.default.post(name: .updateToDo, object: nil, userInfo: userInfo)
     }
     
     
-    /// 카테고리를 변경합니다.
-    /// - Parameter sender: category 변경 버튼
-    @IBAction func changeCategory(_ sender: UIButton) {
-        menu?.show()
-        menu?.anchorView = sender
-        guard let height = menu?.anchorView?.plainView.bounds.height else { return }
-        menu?.bottomOffset = CGPoint(x: 0, y: height)
-        menu?.width = view.frame.width / 2
-        menu?.backgroundColor = UIColor.systemGray6
-        menu?.textColor = .label
-        menu?.selectionAction = { [weak self] (index: Int, item: Todo.toDoCategory.RawValue) in
-            self?.toDoCategoryLabel.text = item
-            
-            switch item {
-            case "업무":
-                self?.selectedTodo?.toDoCategory = .duty
-            case "개인":
-                self?.selectedTodo?.toDoCategory = .study
-            case "운동":
-                self?.selectedTodo?.toDoCategory = .workout
-            default:
-                break
-            }
-        }
+    func initializeData() {
+        contentTextField.text = reallySelectedTodo?.content
+        dateTimeLabel.text = reallySelectedTodo?.insertDate.dateToString
+        detailTextView.isHidden = false
+        toggleIsMarkedButton.setTitle("", for: .normal)
+        
+        guard let selectedCategoryRawvalue = selectedCategoryRawvalue else { return }
+        categoryPickerView.selectRow(selectedCategoryRawvalue.rawValue, inComponent: 0, animated: true)
     }
-    
-    
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        changeCategoryButton.contentHorizontalAlignment = .leading
-        contentTextField.text = selectedTodo?.content
-        dateTimeLabel.text = selectedTodo?.insertDate.dateToString
-        detailTextView.isHidden = false
-        toggleIsMarkedButton.setTitle("", for: .normal)
-        
+        initializeData()
         
         NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { [weak self] (noti) in
             guard let self = self else { return }
@@ -181,6 +150,35 @@ extension DetailViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         guard let content = textField.text, content.count > 0 else { return }
         
-        selectedTodo?.content = content
+        reallySelectedTodo?.content = content
     }
+}
+
+
+
+
+extension DetailViewController: UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return categoryList.count
+    }
+}
+
+
+
+
+extension DetailViewController: UIPickerViewDelegate {
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return "\(categoryList[row])"
+    }
+    
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        reallySelectedTodo?.category.categoryName = categoryList[row]
+    }
+    
 }

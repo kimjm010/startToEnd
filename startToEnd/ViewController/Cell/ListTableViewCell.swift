@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 class ListTableViewCell: UITableViewCell {
 
     @IBOutlet weak var toDoLabel: UILabel!
@@ -21,26 +22,26 @@ class ListTableViewCell: UITableViewCell {
     
     @IBOutlet weak var isMarkedImageView: UIImageView!
     
-    var selectedToDo: Todo?
+    @IBOutlet weak var isCompletedImageView: UIImageView!
+    
+    var isCompleted: Bool = false
+    
+    var isMarked: Bool = false
     
     
     @IBAction func toggleMarked(_ sender: UIButton) {
-
-        print(#function, selectedToDo?.content, selectedToDo?.isMarked)
-        // TODO: toDo가 nil이야
-        guard let selectedToDo = selectedToDo else { return }
-
-        if !(selectedToDo.isMarked) {
-            isMarkedImageView.isHighlighted = true
-            selectedToDo.isMarked = true
-        } else {
-            selectedToDo.isMarked = false
-            isMarkedImageView.isHighlighted = false
-        }
-        
-        //isMarkedImageView.isHighlighted = selectedToDo.isMarked ? false : true
-        //selectedToDo.isMarked = selectedToDo.isMarked ? false : true
+        isMarked = isMarked ? false : true
+        isMarkedImageView.isHighlighted = isMarked ? true : false
     }
+    
+    
+    @IBAction func toggleComplete(_ sender: Any) {
+        isCompleted = isCompleted ? false : true
+        isCompletedImageView.isHighlighted = isCompleted ? true : false
+        self.alpha = isCompleted ? 0.2 : 1.0
+        // TODO: Haptic Touch 넣어보기!
+    }
+    
     
     
     override func awakeFromNib() {
@@ -51,10 +52,11 @@ class ListTableViewCell: UITableViewCell {
     }
     
     
-    func configure(todo: Todo) {
-        toDoLabel.text = todo.content
-        categoryLabel.text = todo.toDoCategory.rawValue
-        dateLabel.text = todo.insertDate.dateToString
-        isMarkedImageView.isHighlighted = todo.isMarked
+    func reallyConfigure(todo1: Todo1) {
+        toDoLabel.text = todo1.content
+        dateLabel.text = todo1.insertDate.dateToString
+        categoryLabel.text = "\(todo1.category.categoryName)"
+        isMarkedImageView.isHighlighted = isMarked
+        isCompletedImageView.isHighlighted = isCompleted
     }
 }
