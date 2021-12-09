@@ -13,6 +13,7 @@ extension UIView {
     enum ViewStyleOptions {
         case lightShadow
         case pillShape
+        case applyBigRoundedRect
     }
     
     
@@ -27,6 +28,8 @@ extension UIView {
                 self.applyLightShadow()
             case .pillShape:
                 applyPillShape()
+            case .applyBigRoundedRect:
+                applyLightShadow()
             }
         }
     }
@@ -34,6 +37,11 @@ extension UIView {
     /// 뷰에 알약 모양을 적용합니다.
     func applyPillShape() {
         self.layer.cornerRadius = self.frame.height / 2
+    }
+    
+    /// 상대적으로 큰 직사각형 뷰에 둥근 모서리를 적용합니다.
+    func applyBigRoundedRect() {
+        self.layer.cornerRadius = self.frame.height / 6
     }
     
     /// 옅은 그림자를 추가합니다.
