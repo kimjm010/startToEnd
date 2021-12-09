@@ -21,6 +21,8 @@ class DiaryListViewController: UIViewController {
     
     @IBOutlet weak var listTableView: UITableView!
     
+    
+    
     /// 화면에 표시한 MyDiary 배열
     var displayedList = [MyDiary]()
     

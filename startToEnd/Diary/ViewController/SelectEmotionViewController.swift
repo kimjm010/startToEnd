@@ -10,6 +10,8 @@ import UIKit
 
 extension NSNotification.Name {
     static let didSelectEmotionImage = Notification.Name(rawValue: "didSelectEmotionImage")
+    
+    static let didUpdateEmotionImage = Notification.Name(rawValue: "didUpdateEmotionImage")
 }
 
 
@@ -58,6 +60,8 @@ extension SelectEmotionViewController: UICollectionViewDelegate {
         
         let userInfo = ["newImage": selectedImage]
         NotificationCenter.default.post(name: .didSelectEmotionImage, object: nil, userInfo: userInfo)
+        
+        NotificationCenter.default.post(name: .didUpdateEmotionImage, object: nil, userInfo: userInfo)
         dismiss(animated: true, completion: nil)
     }
 }

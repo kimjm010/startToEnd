@@ -35,6 +35,10 @@
 		F5C42B56276074C300B9E197 /* DiaryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C42B55276074C300B9E197 /* DiaryModel.swift */; };
 		F5C9080F275D951400ED49DD /* CreateNewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C9080E275D951400ED49DD /* CreateNewCategoryViewController.swift */; };
 		F5C90811275EECA600ED49DD /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C90810275EECA600ED49DD /* UIView+Extension.swift */; };
+		F5CC22A32761E64B00F5E938 /* DisplayImagesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CC22A22761E64B00F5E938 /* DisplayImagesCollectionViewCell.swift */; };
+		F5CC22A52761ED9400F5E938 /* MenuCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CC22A42761ED9400F5E938 /* MenuCollectionViewCell.swift */; };
+		F5CC22A72761FF6900F5E938 /* AttachedImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CC22A62761FF6900F5E938 /* AttachedImageCollectionViewCell.swift */; };
+		F5CC22A9276205B600F5E938 /* DetailAttachedImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CC22A8276205B600F5E938 /* DetailAttachedImageCollectionViewCell.swift */; };
 		F5E11BA72755D894007C582A /* ListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E11BA62755D894007C582A /* ListTableViewCell.swift */; };
 		F5E189CD2756B4E100DCC300 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E189CC2756B4E100DCC300 /* UIViewController+Alert.swift */; };
 /* End PBXBuildFile section */
@@ -72,6 +76,10 @@
 		F5C42B55276074C300B9E197 /* DiaryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryModel.swift; sourceTree = "<group>"; };
 		F5C9080E275D951400ED49DD /* CreateNewCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewCategoryViewController.swift; sourceTree = "<group>"; };
 		F5C90810275EECA600ED49DD /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
+		F5CC22A22761E64B00F5E938 /* DisplayImagesCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayImagesCollectionViewCell.swift; sourceTree = "<group>"; };
+		F5CC22A42761ED9400F5E938 /* MenuCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuCollectionViewCell.swift; sourceTree = "<group>"; };
+		F5CC22A62761FF6900F5E938 /* AttachedImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachedImageCollectionViewCell.swift; sourceTree = "<group>"; };
+		F5CC22A8276205B600F5E938 /* DetailAttachedImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailAttachedImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		F5E11BA62755D894007C582A /* ListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTableViewCell.swift; sourceTree = "<group>"; };
 		F5E189CC2756B4E100DCC300 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -209,6 +217,10 @@
 				F5C42B4E27605FC700B9E197 /* DiaryListTableViewCell.swift */,
 				F534B3C527609CFC00F3E24D /* EmotionCollectionViewCell.swift */,
 				F534B3C9276191DC00F3E24D /* ImageCollectionViewCell.swift */,
+				F5CC22A22761E64B00F5E938 /* DisplayImagesCollectionViewCell.swift */,
+				F5CC22A42761ED9400F5E938 /* MenuCollectionViewCell.swift */,
+				F5CC22A62761FF6900F5E938 /* AttachedImageCollectionViewCell.swift */,
+				F5CC22A8276205B600F5E938 /* DetailAttachedImageCollectionViewCell.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -358,11 +370,15 @@
 			files = (
 				F5C42B56276074C300B9E197 /* DiaryModel.swift in Sources */,
 				F534B3CA276191DC00F3E24D /* ImageCollectionViewCell.swift in Sources */,
+				F5CC22A52761ED9400F5E938 /* MenuCollectionViewCell.swift in Sources */,
 				F51517A8275783B90024266F /* DetailViewController.swift in Sources */,
+				F5CC22A72761FF6900F5E938 /* AttachedImageCollectionViewCell.swift in Sources */,
+				F5CC22A9276205B600F5E938 /* DetailAttachedImageCollectionViewCell.swift in Sources */,
 				F5A4B33D27584E6800DC415B /* Date+Formatter.swift in Sources */,
 				F5C42B5327605FFD00B9E197 /* DiaryComposeViewController.swift in Sources */,
 				F5E11BA72755D894007C582A /* ListTableViewCell.swift in Sources */,
 				F5C42B4F27605FC700B9E197 /* DiaryListTableViewCell.swift in Sources */,
+				F5CC22A32761E64B00F5E938 /* DisplayImagesCollectionViewCell.swift in Sources */,
 				F534B3C827618E2000F3E24D /* ImageDisplayViewController.swift in Sources */,
 				F5C90811275EECA600ED49DD /* UIView+Extension.swift in Sources */,
 				F5A4083127546F6E00F08378 /* CategoryListCollectionViewCell.swift in Sources */,

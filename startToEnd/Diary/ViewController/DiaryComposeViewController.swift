@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 
 extension NSNotification.Name {
@@ -31,6 +32,12 @@ class DiaryComposeViewController: UIViewController {
     
     @IBOutlet weak var backgroungView: UIView!
     
+    @IBOutlet var accessoryBar: UIToolbar!
+    
+    @IBOutlet weak var separationView: UIView!
+    
+    @IBOutlet weak var composeTextViewBottonConstraint: NSLayoutConstraint!
+    
     /// 일기 정보 저장 속성
     var diary: MyDiary?
     
@@ -50,12 +57,23 @@ class DiaryComposeViewController: UIViewController {
     /// - Parameter sender: Save 버튼
     @IBAction func saveDiary(_ sender: Any) {
         
-        let newDiary = MyDiary(content: contentTextView.text, insertDate: datePicker.date, statusImage: emotionImageView.image)
+        let newDiary = MyDiary(content: contentTextView.text, insertDate: datePicker.date, statusImage: emotionImageView.image, images: imageList)
         
         let userInfo = ["newDiary": newDiary]
         NotificationCenter.default.post(name: .didInsertNewDiary, object: nil, userInfo: userInfo)
         dismiss(animated: true, completion: nil)
     }
+    
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        imageCollectionView.isHidden = imageList.count == 0
+        separationView.isHidden = imageCollectionView.isHidden
+    }
+    
+    
     
     
     override func viewDidLoad() {
@@ -66,6 +84,13 @@ class DiaryComposeViewController: UIViewController {
         NotificationCenter.default.addObserver(forName: .didSelectEmotionImage, object: nil, queue: .main) { [weak self] (noti) in
             guard let emotion = noti.userInfo?["newImage"] as? UIImage else { return }
             self?.emotionImageView.image = emotion
+        }
+        
+        NotificationCenter.default.addObserver(forName: .imageDidSelect, object: nil, queue: .main) { [weak self] (noti) in
+            guard let selectedImage = noti.userInfo?["image"] as? UIImage else { return }
+            
+            self?.imageList.append(selectedImage)
+            self?.imageCollectionView.reloadData()
         }
     }
     
@@ -83,7 +108,9 @@ class DiaryComposeViewController: UIViewController {
     /// 필요한 데이터를 초기화합니다.
     func initializeData() {
         selectEmotionImageButton.setTitle("", for: .normal)
-        imageCollectionView.isHidden = imageList.count == 0
+        contentTextView.inputAccessoryView = accessoryBar
+        contentTextView.backgroundColor = backgroungView.backgroundColor
+        contentTextView.alpha = 0.5
         
         switch composeTag {
         case 101:
@@ -116,5 +143,47 @@ extension DiaryComposeViewController: UITextViewDelegate {
         
         diary?.content = content
         placeholderLabel.isHidden = true
+    }
+}
+
+
+
+
+extension DiaryComposeViewController: UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return imageList.count
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AttachedImageCollectionViewCell", for: indexPath) as! AttachedImageCollectionViewCell
+        
+        let target = imageList[indexPath.item]
+        cell.configure(img: target)
+        return cell
+    }
+}
+
+
+
+
+extension DiaryComposeViewController: UICollectionViewDelegate {
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        imageList.remove(at: indexPath.item)
+        imageCollectionView.deleteItems(at: [indexPath])
+        imageCollectionView.reloadData()
+    }
+}
+
+
+
+
+extension DiaryComposeViewController: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        return CGSize(width: 100, height: 100)
     }
 }
