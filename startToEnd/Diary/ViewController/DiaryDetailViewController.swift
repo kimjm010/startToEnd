@@ -27,16 +27,18 @@ class DiaryDetailViewController: UIViewController {
     
     @IBOutlet weak var createdDateLabel: UILabel!
     
-    @IBOutlet weak var updatedDateLabel: UILabel!
-    
-    @IBOutlet weak var contentTextViewBottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var separationView: UIView!
     
     var diary: MyDiary?
     
     var imageList = [UIImage]()
+
     
-    
-    @IBAction func changeEmotion(_ sender: Any) {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        listCollectionView.isHidden = imageList.count == 0
+        separationView.isHidden = listCollectionView.isHidden
         
     }
     
@@ -50,6 +52,7 @@ class DiaryDetailViewController: UIViewController {
             guard let newEmotion = noti.userInfo?["newImage"] as? UIImage else { return }
             
             self?.diary?.statusImage = newEmotion
+            self?.emotionBackgroungImageView.image = newEmotion
         }
         
         
@@ -60,7 +63,13 @@ class DiaryDetailViewController: UIViewController {
             
             if let frame = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
                 let height = frame.height
-                self.contentTextViewBottomConstraint.constant = height
+                var inset = self.contentTextView.contentInset
+                inset.bottom = height
+                self.contentTextView.contentInset = inset
+                
+                inset = self.contentTextView.verticalScrollIndicatorInsets
+                inset.bottom = height
+                self.contentTextView.verticalScrollIndicatorInsets = inset
             }
         }
         
@@ -69,8 +78,10 @@ class DiaryDetailViewController: UIViewController {
                                                object: nil,
                                                queue: .main) { [weak self] (noti) in
             guard let self = self else { return }
-            
-            self.contentTextViewBottomConstraint.constant = 0
+            var inset = self.contentTextView.contentInset
+            inset.bottom = 0
+            self.contentTextView.contentInset = inset
+            self.contentTextView.verticalScrollIndicatorInsets = inset
         }
         
     }
@@ -94,13 +105,16 @@ class DiaryDetailViewController: UIViewController {
     
     /// 필요한 데이터를 초기화합니다.
     func initializeData() {
-        guard let list = diary?.images else { return }
         
         dateLabelContainerView.applyBigRoundedRect()
         emotionBackgroungImageView.image = diary?.statusImage
-        createdDateLabel.text = diary?.insertDate.dateToString
-        imageList = list
+        guard let date = diary?.insertDate else { return }
+        createdDateLabel.text = "Created Data: \(date.dateToString)"
         contentTextView.text = diary?.content
+        changeEmotionImageButton.setTitle("", for: .normal)
+        
+        guard let list = diary?.images else { return }
+        imageList = list
         listCollectionView.isHidden = imageList.count == 0
     }
 }
@@ -117,8 +131,10 @@ extension DiaryDetailViewController: UITextViewDelegate {
         
         if originalText != updated {
             diary?.content = updated
-            diary?.insertDate = Date()
-            updatedDateLabel.text = diary?.insertDate.dateToString
+            guard var updatedDate = diary?.insertDate else { return }
+            updatedDate = Date()
+            createdDateLabel.text = "Updated Date: \(updatedDate.dateToString)"
+            diary?.insertDate = updatedDate
         }
     }
 }
@@ -142,6 +158,7 @@ extension DiaryDetailViewController: UICollectionViewDataSource {
         return cell
     }
 }
+
 
 
 

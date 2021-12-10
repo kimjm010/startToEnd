@@ -19,8 +19,6 @@ class MyDiary {
         //self.specificLocation = specificLocation
     }
     
-    
-    
     var content: String?
     var insertDate: Date
     var statusImage: UIImage?

@@ -92,6 +92,28 @@ class DiaryComposeViewController: UIViewController {
             self?.imageList.append(selectedImage)
             self?.imageCollectionView.reloadData()
         }
+        
+        
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { [weak self] (noti) in
+            guard let self = self else { return }
+            guard let frame = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+            let height = frame.height
+            var inset = self.contentTextView.contentInset
+            inset.bottom = height
+            self.contentTextView.contentInset = inset
+            
+            inset = self.contentTextView.verticalScrollIndicatorInsets
+            inset.bottom = height
+            self.contentTextView.verticalScrollIndicatorInsets = inset
+        }
+        
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { [weak self] _ in
+            guard let self = self else { return }
+            var inset = self.contentTextView.contentInset
+            inset.bottom = 0
+            self.contentTextView.contentInset = inset
+            self.contentTextView.verticalScrollIndicatorInsets = inset
+        }
     }
     
     

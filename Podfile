@@ -6,5 +6,4 @@ target 'startToEnd' do
   use_frameworks!
 
   # Pods for startToEnd
-pod 'DropDown'
 end

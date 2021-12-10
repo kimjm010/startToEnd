@@ -27,6 +27,12 @@ class SelectEmotionViewController: UIViewController {
         
         return list
     }()
+    
+    
+    @IBAction func closeVC(_ sender: Any) {
+        dismiss(animated: true, completion: nil)
+    }
+    
 }
 
 
@@ -53,8 +59,6 @@ extension SelectEmotionViewController: UICollectionViewDataSource {
 extension SelectEmotionViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-        print(#function)
         
         let selectedImage = emotionList[indexPath.item]
         

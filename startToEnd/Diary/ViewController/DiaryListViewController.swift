@@ -21,7 +21,7 @@ class DiaryListViewController: UIViewController {
     
     @IBOutlet weak var listTableView: UITableView!
     
-    
+    @IBOutlet weak var dimmingView: UIView!
     
     /// 화면에 표시한 MyDiary 배열
     var displayedList = [MyDiary]()
@@ -30,6 +30,7 @@ class DiaryListViewController: UIViewController {
     
     var updatedIndexPath: IndexPath?
     
+    var isShow: Bool = false
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let cell = sender as? UITableViewCell, let indexPath = listTableView.indexPath(for: cell) {
@@ -47,11 +48,16 @@ class DiaryListViewController: UIViewController {
     }
     
     
+    /// 일기 작성메뉴를 표시합니다.
+    ///
+    /// 그날의 분위기에 따라 서로 다른 일기 배경을 표시합니다.
+    /// - Parameter sender: showComposeMenu 버튼
     @IBAction func composeDiary(_ sender: Any) {
-        UIView.animate(withDuration: 0.3) {
-            self.composeListContainerView.isHidden = false
-        }
+        isShow = isShow ? false : true
+        dimmingView.alpha = isShow ? 0.5 : 0.0
+        composeListContainerView.isHidden = isShow ? false : true
     }
+    
     
     @IBAction func moveToComposeScene(_ sender: UIButton) {
         switch sender.tag {
@@ -66,7 +72,16 @@ class DiaryListViewController: UIViewController {
         }
     }
     
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        dimmingView.alpha = 0.0
+        sortedList = dummyDiaryList.sorted {
+            return $0.insertDate > $1.insertDate
+        }
+        
+        listTableView.reloadData()
+    }
     
     
     override func viewDidLoad() {
@@ -89,13 +104,18 @@ class DiaryListViewController: UIViewController {
         
         
         NotificationCenter.default.addObserver(forName: .updatedDiaryDidInsert, object: nil, queue: .main) { [weak self] (noti) in
-            guard let updatedIndexPath = self?.updatedIndexPath else { return }
-
+            guard let updatedIndexPath = self?.updatedIndexPath, let self = self else { return }
+            
             guard let updated = noti.userInfo?["updated"] as? MyDiary else { return }
             
-            self?.sortedList[updatedIndexPath.row].content = updated.content
-            self?.sortedList[updatedIndexPath.row].insertDate = updated.insertDate
-            self?.listTableView.reloadData()
+            self.sortedList[updatedIndexPath.row].content = updated.content
+            self.sortedList[updatedIndexPath.row].insertDate = updated.insertDate
+            
+            self.sortedList = self.sortedList.sorted {
+                return $0.insertDate > $1.insertDate
+            }
+                        
+            self.listTableView.reloadData()
         }
     }
     
@@ -110,6 +130,7 @@ class DiaryListViewController: UIViewController {
         composeListContainerView.isHidden = true
         showComposeMenuButton.setTitle("", for: .normal)
     }
+    
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -149,6 +170,7 @@ extension DiaryListViewController: UITableViewDataSource {
 
 
 extension DiaryListViewController: UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
