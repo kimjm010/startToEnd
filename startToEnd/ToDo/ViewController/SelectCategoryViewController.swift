@@ -8,35 +8,49 @@
 import UIKit
 
 
+/// Category선택 화면
 class SelectCategoryViewController: UIViewController {
 
+    /// Category 표시 테이블 뷰
     @IBOutlet weak var listTableView: UITableView!
     
-    var categoryList = Category2.allCases
+    /// 옵저버 제거를 위해 토큰을 담는 배열
+    var tokens = [NSObjectProtocol]()
+    
+    /// TodoCategory 배열
+    ///
+    /// 기본적으로 3개의 속성이 선언되어 있습니다.
+    var list = [
+        TodoCategory(categoryOptions: "\(Category2.duty)"),
+        TodoCategory(categoryOptions: "\(Category2.workout)"),
+        TodoCategory(categoryOptions: "\(Category2.study)")
+    ]
     
     
+    /// Category선택 화면을 닫습니다.
     @IBAction func closeVC(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
     
     
+    /// 뷰 컨트롤러의 뷰 계층이 메모리에 올라간 뒤 호출됩니다.
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        NotificationCenter.default.addObserver(forName: .newCategoryDidInsert, object: nil, queue: .main) { [weak self] (noti) in
+        // 새로운 Category를 추가합니다.
+        let token = NotificationCenter.default.addObserver(forName: .newCategoryDidInsert, object: nil, queue: .main) { [weak self] (noti) in
             guard let newCategory = noti.userInfo?["newCategory"] as? String else { return }
-            
-            #if DEBUG
-            print(newCategory)
-            #endif
-            
-            // TODO: 왜 자꾸 Category2인스턴스를 만들면 nil이 되는 걸까
-            guard let count = self?.categoryList.count else { return }
-            let insertCategory = Category2.init(rawValue: count + 1)
-            // 여기서 자꾸 Optional Category2인스턴스가 만들어지네
-            self?.categoryList.append(insertCategory ?? .duty)
+            self?.list.append(TodoCategory(categoryOptions: newCategory))
             self?.listTableView.reloadData()
+        }
+        tokens.append(token)
+        
+    }
+    
+    /// 소멸자에서 옵저버를 제거합니다.
+    deinit {
+        for token in tokens {
+            NotificationCenter.default.removeObserver(token)
         }
     }
 }
@@ -44,24 +58,25 @@ class SelectCategoryViewController: UIViewController {
 
 
 
-
 extension SelectCategoryViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categoryList.count
+        return list.count
     }
+    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SelectCategoryTableViewCell", for: indexPath) as! SelectCategoryTableViewCell
         
-        let target = categoryList[indexPath.row]
-        cell.configure(category: target)
+        let target = list[indexPath.row]
+        cell.configure(category: target.categoryOptions)
         return cell
     }
     
+    
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            categoryList.remove(at: indexPath.row)
+            list.remove(at: indexPath.row)
             listTableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }
@@ -73,9 +88,7 @@ extension SelectCategoryViewController: UITableViewDataSource {
 extension SelectCategoryViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(#function, "%%%%%%%%")
-        
-        let category = categoryList[indexPath.row]
+        let category = list[indexPath.row]
         let userInfo = ["select": category]
         NotificationCenter.default.post(name: .selectCategory, object: nil, userInfo: userInfo)
         dismiss(animated: true, completion: nil)

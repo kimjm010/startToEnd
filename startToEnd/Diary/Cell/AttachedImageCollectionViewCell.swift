@@ -11,7 +11,9 @@ class AttachedImageCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var attachedImage: UIImageView!
     
-    func configure(img: UIImage) {
-        attachedImage.image = img
+    
+    func configure(image: UIImage) {
+        attachedImage.image = image
     }
+    
 }

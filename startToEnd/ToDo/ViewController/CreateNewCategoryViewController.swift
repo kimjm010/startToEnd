@@ -12,8 +12,6 @@ class CreateNewCategoryViewController: UIViewController {
     
     @IBOutlet weak var composeNewCategoryTextField: UITextField!
     
-    var insertCategory: String?
-    
     
     @IBAction func insertNewCategory(_ sender: Any) {
         guard let newCategory = composeNewCategoryTextField.text, newCategory.count > 0 else {
@@ -24,10 +22,10 @@ class CreateNewCategoryViewController: UIViewController {
         let userInfo = ["newCategory": newCategory]
         NotificationCenter.default.post(name: .newCategoryDidInsert, object: nil, userInfo: userInfo)
         navigationController?.popViewController(animated: true)
-        //navigationItem.leftBarButtonItem?.tintColor = UIColor.label
     }
     
     
+    /// 뷰 컨트롤러의 뷰 계층이 메모리에 올라간 뒤 호출됩니다.
     override func viewDidLoad() {
         super.viewDidLoad()
         

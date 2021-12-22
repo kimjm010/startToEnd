@@ -32,11 +32,13 @@ class DiaryListViewController: UIViewController {
     
     var isShow: Bool = false
     
+    var list = [MyDiaryEntity]()
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let cell = sender as? UITableViewCell, let indexPath = listTableView.indexPath(for: cell) {
             updatedIndexPath = indexPath
             if let vc = segue.destination as? DiaryDetailViewController {
-                vc.diary = sortedList[indexPath.row]
+                vc.diary = list[indexPath.row]
             }
         }
         
@@ -72,6 +74,7 @@ class DiaryListViewController: UIViewController {
         }
     }
     
+    /// 뷰가 화면에 표시되기 직전에 호출됩니다.
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -84,38 +87,25 @@ class DiaryListViewController: UIViewController {
     }
     
     
+    /// 뷰 컨트롤러의 뷰 계층이 메모리에 올라간 뒤 호출됩니다.
     override func viewDidLoad() {
         super.viewDidLoad()
         
         initializeData()
         
-        NotificationCenter.default.addObserver(forName: .didInsertNewDiary, object: nil, queue: .main) { [weak self] (noti) in
-            guard let self = self else { return }
-            guard let newDiary = noti.userInfo?["newDiary"] as? MyDiary else { return }
-            
-            self.sortedList.insert(newDiary, at: 0)
-            
-            self.sortedList = self.sortedList.sorted {
-                return $0.insertDate > $1.insertDate
-            }
-            
-            self.listTableView.reloadData()
+        
+        list = DataManager.shared.fetchDiary()
+        listTableView.reloadData()
+        
+        NotificationCenter.default.addObserver(forName: .didInsertNewDiary, object: nil, queue: .main) { [weak self] _ in
+            self?.list = DataManager.shared.fetchDiary()
+            self?.listTableView.reloadData()
         }
+ 
         
-        
-        NotificationCenter.default.addObserver(forName: .updatedDiaryDidInsert, object: nil, queue: .main) { [weak self] (noti) in
-            guard let updatedIndexPath = self?.updatedIndexPath, let self = self else { return }
-            
-            guard let updated = noti.userInfo?["updated"] as? MyDiary else { return }
-            
-            self.sortedList[updatedIndexPath.row].content = updated.content
-            self.sortedList[updatedIndexPath.row].insertDate = updated.insertDate
-            
-            self.sortedList = self.sortedList.sorted {
-                return $0.insertDate > $1.insertDate
-            }
-                        
-            self.listTableView.reloadData()
+        NotificationCenter.default.addObserver(forName: .didUpdateDiary, object: nil, queue: .main) { [weak self] _ in
+            self?.list = DataManager.shared.fetchDiary()
+            self?.listTableView.reloadData()
         }
     }
     
@@ -145,23 +135,30 @@ class DiaryListViewController: UIViewController {
 extension DiaryListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sortedList.count
+        return list.count
     }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "DiaryListTableViewCell", for: indexPath) as! DiaryListTableViewCell
         
-        let target = sortedList[indexPath.row]
-        cell.configure(diary: target)
+        let diary = list[indexPath.row]
+        cell.configure(diary: diary)
         return cell
     }
     
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            sortedList.remove(at: indexPath.row)
+    func tableView(_ tableView: UITableView,
+                   commit editingStyle: UITableViewCell.EditingStyle,
+                   forRowAt indexPath: IndexPath) {
+        
+        switch editingStyle {
+        case .delete:
+            let diary = list.remove(at: indexPath.row)
+            DataManager.shared.deleteDiary(entity: diary)
             listTableView.deleteRows(at: [indexPath], with: .automatic)
+        default:
+            break
         }
     }
 }

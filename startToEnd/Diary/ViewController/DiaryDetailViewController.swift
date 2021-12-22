@@ -6,10 +6,11 @@
 //
 
 import UIKit
+import CoreData
 
 
 extension NSNotification.Name {
-    static let updatedDiaryDidInsert = Notification.Name(rawValue: "updatedDiaryDidInsert")
+    static let didUpdateDiary = Notification.Name(rawValue: "didUpdateDiary")
 }
 
 
@@ -29,11 +30,16 @@ class DiaryDetailViewController: UIViewController {
     
     @IBOutlet weak var separationView: UIView!
     
-    var diary: MyDiary?
+    var diary: MyDiaryEntity?
     
     var imageList = [UIImage]()
-
     
+    var photos = [PhotoGalleryEntity]()
+    
+    var target: NSManagedObject?
+
+
+    /// 뷰가 화면에 표시되기 직전에 호출됩니다.
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -43,6 +49,7 @@ class DiaryDetailViewController: UIViewController {
     }
     
     
+    /// 뷰 컨트롤러의 뷰 계층이 메모리에 올라간 뒤 호출됩니다.
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -51,8 +58,28 @@ class DiaryDetailViewController: UIViewController {
         NotificationCenter.default.addObserver(forName: .didUpdateEmotionImage, object: nil, queue: .main) { [weak self] (noti) in
             guard let newEmotion = noti.userInfo?["newImage"] as? UIImage else { return }
             
-            self?.diary?.statusImage = newEmotion
+            self?.diary?.statusImage = newEmotion.pngData()
             self?.emotionBackgroungImageView.image = newEmotion
+        }
+        
+        if let target = target as? MyDiaryEntity {
+            
+            guard let diary = diary else { return }
+            
+            let updatedDiary = MyDiary(content: diary.content,
+                                       insertDate: diary.insertDate ?? Date(),
+                                       statusImage: UIImage(data: diary.statusImage!))
+            
+            DataManager.shared.updateDiary(entity: target,
+                                           content: updatedDiary.content ?? diary.content!,
+                                           insertDate: updatedDiary.insertDate,
+                                           statusImage: updatedDiary.statusImage?.pngData()) {
+                let userInfo = ["updated": updatedDiary]
+                NotificationCenter.default.post(name: .didUpdateDiary,
+                                                object: nil,
+                                                userInfo: userInfo)
+                self.dismiss(animated: true, completion: nil)
+            }
         }
         
         
@@ -89,32 +116,18 @@ class DiaryDetailViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        guard let diary = diary else { return }
-        
-        
-        let updatedDiary = MyDiary(content: diary.content,
-                                   insertDate: diary.insertDate,
-                                   statusImage: diary.statusImage)
-        
-        let userInfo = ["updated": updatedDiary]
-        NotificationCenter.default.post(name: .updatedDiaryDidInsert,
-                                        object: nil,
-                                        userInfo: userInfo)
     }
     
     
     /// 필요한 데이터를 초기화합니다.
     func initializeData() {
+        guard let diary = diary, let defaultImageData = UIImage(named: "1")?.pngData() else { return }
         
         dateLabelContainerView.applyBigRoundedRect()
-        emotionBackgroungImageView.image = diary?.statusImage
-        guard let date = diary?.insertDate else { return }
-        createdDateLabel.text = "Created Data: \(date.dateToString)"
-        contentTextView.text = diary?.content
+        emotionBackgroungImageView.image = UIImage(data: diary.statusImage ?? defaultImageData)
+        createdDateLabel.text = "Date: \(diary.insertDate!.dateToString)"
+        contentTextView.text = diary.content
         changeEmotionImageButton.setTitle("", for: .normal)
-        
-        guard let list = diary?.images else { return }
-        imageList = list
         listCollectionView.isHidden = imageList.count == 0
     }
 }
@@ -133,7 +146,7 @@ extension DiaryDetailViewController: UITextViewDelegate {
             diary?.content = updated
             guard var updatedDate = diary?.insertDate else { return }
             updatedDate = Date()
-            createdDateLabel.text = "Updated Date: \(updatedDate.dateToString)"
+            createdDateLabel.text = updatedDate.dateToString
             diary?.insertDate = updatedDate
         }
     }

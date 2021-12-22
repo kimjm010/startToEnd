@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19461" systemVersion="20G165" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="MyDiary" representedClassName="MyDiaryEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="content" optional="YES" attributeType="String"/>
+        <attribute name="image" optional="YES" attributeType="Binary"/>
+        <attribute name="insertDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="statusImage" optional="YES" attributeType="Binary"/>
+    </entity>
+    <entity name="PhotoGallery" representedClassName="PhotoGalleryEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="image" optional="YES" attributeType="Binary"/>
+    </entity>
+    <entity name="Todo" representedClassName="TodoEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="category" attributeType="String"/>
+        <attribute name="content" optional="YES" attributeType="String"/>
+        <attribute name="insertDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="isCompleted" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isMarked" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isRepeat" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="memo" optional="YES" attributeType="String"/>
+        <attribute name="notiDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="reminder" attributeType="Boolean" usesScalarValueType="YES"/>
+    </entity>
+    <elements>
+        <element name="MyDiary" positionX="-63" positionY="-18" width="128" height="89"/>
+        <element name="PhotoGallery" positionX="-63" positionY="27" width="128" height="44"/>
+        <element name="Todo" positionX="-63" positionY="9" width="128" height="164"/>
+    </elements>
+</model>

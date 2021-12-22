@@ -10,7 +10,7 @@ import Photos
 
 
 extension NSNotification.Name {
-    static let imageDidSelect = Notification.Name(rawValue: "imageDidSelect")
+    
 }
 
 
@@ -32,8 +32,6 @@ class ImageDisplayViewController: UIViewController {
     
     let imageManager = PHImageManager()
     
-    var imageList = [UIImage]()
-    
     
     @IBAction func editSelectedImageList(_ sender: Any) {
         if #available(iOS 14, *) {
@@ -48,19 +46,19 @@ class ImageDisplayViewController: UIViewController {
     
     
     @IBAction func selectAttachedImages(_ sender: Any) {
+        print(#function)
         guard let indexPath = listCollectionView.indexPathsForSelectedItems else { return }
         
         for index in indexPath {
             let target = allPhotos.object(at: index.item)
             let size = CGSize(width: listCollectionView.frame.width / 2, height: listCollectionView.frame.width / 2)
             
-            imageManager.requestImage(for: target, targetSize: size, contentMode: .aspectFill, options: nil) { [weak self] (image, _) in
-                if let image = image {
-                    let userInfo = ["image": image]
-                    NotificationCenter.default.post(name: .imageDidSelect, object: nil, userInfo: userInfo)
-                    print(image.description)
-                    self?.dismiss(animated: true, completion: nil)
-                }
+            
+            imageManager.requestImage(for: target, targetSize: size, contentMode: .aspectFit, options: nil) { [weak self] (image, _) in
+                guard let image = image else { return }
+                let userInfo = ["image": image]
+                NotificationCenter.default.post(name: .imageDidSelect, object: nil, userInfo: userInfo)
+                self?.dismiss(animated: true, completion: nil)
             }
         }
     }
@@ -126,6 +124,8 @@ class ImageDisplayViewController: UIViewController {
         }
     }
     
+    
+    /// 뷰 컨트롤러의 뷰 계층이 메모리에 올라간 뒤 호출됩니다.
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -154,9 +154,8 @@ extension ImageDisplayViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DisplayImagesCollectionViewCell", for: indexPath) as! DisplayImagesCollectionViewCell
         
         let target = allPhotos.object(at: indexPath.item)
-        let size = CGSize(width: collectionView.frame.width / 2, height: collectionView.frame.width / 2)
-        
-        imageManager.requestImage(for: target, targetSize: size, contentMode: .aspectFill, options: nil) { (image, _) in
+        let size = CGSize(width: collectionView.frame.width / 4, height: collectionView.frame.width / 4)
+        imageManager.requestImage(for: target, targetSize: size, contentMode: .aspectFit, options: nil) { (image, _) in
             cell.configure(img: image)
         }
         
@@ -178,30 +177,14 @@ extension ImageDisplayViewController: UICollectionViewDelegateFlowLayout {
 
 
 
-extension ImageDisplayViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        else {
-//            let actualIndex = hasLimitedPermission ? indexPath.item - 1 : indexPath.item
-//            let target = allPhotos.object(at: actualIndex)
-//            let size = CGSize(width: collectionView.frame.width / 2, height: collectionView.frame.width / 2)
-//
-//            imageManager.requestImage(for: target, targetSize: size, contentMode: .aspectFill, options: nil) { [weak self] (image, _) in
-//                let userInfo = ["image": image]
-//                NotificationCenter.default.post(name: .imageDidSelect, object: nil, userInfo: userInfo)
-//                self?.dismiss(animated: true, completion: nil)
-//            }
-//        }
-    }
-}
-
-
 
 extension ImageDisplayViewController: PHPhotoLibraryChangeObserver {
     func photoLibraryDidChange(_ changeInstance: PHChange) {
         DispatchQueue.main.async {
-            guard let changes = changeInstance.changeDetails(for: self.allPhotos) else { return }
-            self.allPhotos = changes.fetchResultAfterChanges
-            self.listCollectionView.reloadData()
+            if let changes = changeInstance.changeDetails(for: self.allPhotos) {
+                self.allPhotos = changes.fetchResultAfterChanges
+                self.listCollectionView.reloadData()
+            }
         }
     }
 }

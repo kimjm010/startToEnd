@@ -7,23 +7,31 @@
 
 import Foundation
 import UIKit
-import CoreLocation
+
+class PhotoGallery {
+    init(image: Data) {
+        self.image = image
+    }
+    
+    var image: Data
+}
 
 
 class MyDiary {
-    init(content: String? = nil, insertDate: Date, statusImage: UIImage? = nil, images: [UIImage]? = nil) {
+    init(content: String? = nil,
+         insertDate: Date,
+         statusImage: UIImage? = nil,
+         images: UIImage? = nil) {
         self.content = content
         self.insertDate = insertDate
         self.statusImage = statusImage
         self.images = images
-        //self.specificLocation = specificLocation
     }
     
     var content: String?
     var insertDate: Date
     var statusImage: UIImage?
-    var images: [UIImage]?
-    //var specificLocation: CLLocation
+    var images: UIImage?
 }
 
 

@@ -7,6 +7,7 @@
 
 import UIKit
 import AVFoundation
+import CoreData
 
 
 extension NSNotification.Name {
@@ -44,7 +45,13 @@ class DiaryComposeViewController: UIViewController {
     /// 일기에 첨부할 이미지 배열
     var imageList = [UIImage]()
     
+    var photos = [PhotoGalleryEntity]()
+
+    
     var composeTag: Int?
+    
+    var token: NSManagedObject?
+    
     
     /// 일기 작성 화면을 닫습니다.
     /// - Parameter sender: Cancel 버튼
@@ -57,15 +64,24 @@ class DiaryComposeViewController: UIViewController {
     /// - Parameter sender: Save 버튼
     @IBAction func saveDiary(_ sender: Any) {
         
-        let newDiary = MyDiary(content: contentTextView.text, insertDate: datePicker.date, statusImage: emotionImageView.image, images: imageList)
+        let image = UIImage(data: photos.first?.image ?? Data())
         
-        let userInfo = ["newDiary": newDiary]
-        NotificationCenter.default.post(name: .didInsertNewDiary, object: nil, userInfo: userInfo)
-        dismiss(animated: true, completion: nil)
+        let newDiary = MyDiary(content: contentTextView.text,
+                               insertDate: datePicker.date,
+                               statusImage: emotionImageView.image,
+                               images: image)
+                            
+        DataManager.shared.createDiary(content: newDiary.content,
+                                       insertDate: newDiary.insertDate,
+                                       statusImage: newDiary.statusImage?.pngData()) {
+            let userInfo = ["newDiary": newDiary]
+            NotificationCenter.default.post(name: .didInsertNewDiary, object: nil, userInfo: userInfo)
+            self.dismiss(animated: true, completion: nil)
+        }
     }
     
     
-    
+    /// 뷰가 화면에 표시되기 직전에 호출됩니다.
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -74,12 +90,13 @@ class DiaryComposeViewController: UIViewController {
     }
     
     
-    
-    
+    /// 뷰 컨트롤러의 뷰 계층이 메모리에 올라간 뒤 호출됩니다.
     override func viewDidLoad() {
         super.viewDidLoad()
         
         initializeData()
+        photos = DataManager.shared.retrieveImagesData()
+        imageCollectionView.reloadData()
         
         NotificationCenter.default.addObserver(forName: .didSelectEmotionImage, object: nil, queue: .main) { [weak self] (noti) in
             guard let emotion = noti.userInfo?["newImage"] as? UIImage else { return }
@@ -87,9 +104,8 @@ class DiaryComposeViewController: UIViewController {
         }
         
         NotificationCenter.default.addObserver(forName: .imageDidSelect, object: nil, queue: .main) { [weak self] (noti) in
-            guard let selectedImage = noti.userInfo?["image"] as? UIImage else { return }
-            
-            self?.imageList.append(selectedImage)
+            guard let image = noti.userInfo?["image"] as? UIImage else { return }
+            self?.imageList.append(image)
             self?.imageCollectionView.reloadData()
         }
         
@@ -114,6 +130,7 @@ class DiaryComposeViewController: UIViewController {
             self.contentTextView.contentInset = inset
             self.contentTextView.verticalScrollIndicatorInsets = inset
         }
+        
     }
     
     
@@ -182,14 +199,14 @@ extension DiaryComposeViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AttachedImageCollectionViewCell", for: indexPath) as! AttachedImageCollectionViewCell
         
         let target = imageList[indexPath.item]
-        cell.configure(img: target)
+        cell.configure(image: target)
         return cell
     }
 }
 
 
 
-
+ 
 extension DiaryComposeViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
