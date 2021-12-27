@@ -8,6 +8,7 @@
 import Foundation
 import CoreData
 import ImageIO
+import CoreImage
 
 
 extension DataManager {
@@ -87,6 +88,22 @@ extension DataManager {
     }
     
     
+    /// category를 읽어옵니다.
+    func fetchCategory() {
+        mainContext.performAndWait {
+            let request: NSFetchRequest<TodoCategoryEntity> = TodoCategoryEntity.fetchRequest()
+            let sortByNameAsc = NSSortDescriptor(key: "category", ascending: false)
+            request.sortDescriptors = [sortByNameAsc]
+            
+            do {
+                categoryList = try mainContext.fetch(request)
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    
     /// Todo를 업데이트 합니다.
     /// - Parameters:
     ///   - entity: TodoEntity
@@ -156,8 +173,20 @@ extension DataManager {
         }
     }
     
-    // Delete
+    
+    /// todoEntity를 삭제합니다.
+    /// - Parameter entity: todoEntity객체
     func deleteTodo(entity: TodoEntity) {
+        mainContext.perform {
+            self.mainContext.delete(entity)
+            self.saveMainContext()
+        }
+    }
+    
+    
+    /// TodoCategoryEntity를 삭제합니다.
+    /// - Parameter entity: TodoCategoryEntity객체
+    func deleteCategory(entity: TodoCategoryEntity) {
         mainContext.perform {
             self.mainContext.delete(entity)
             self.saveMainContext()

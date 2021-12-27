@@ -22,7 +22,6 @@
 		F5388E812751FBF5005426D1 /* startToEnd.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F5388E7F2751FBF5005426D1 /* startToEnd.xcdatamodeld */; };
 		F5388E832751FBF6005426D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F5388E822751FBF6005426D1 /* Assets.xcassets */; };
 		F5388E862751FBF6005426D1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F5388E842751FBF6005426D1 /* LaunchScreen.storyboard */; };
-		F5388E8F27521758005426D1 /* ToDoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5388E8E27521758005426D1 /* ToDoModel.swift */; };
 		F5446D85275F41EB00B1CC05 /* NSNotification+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5446D84275F41EB00B1CC05 /* NSNotification+Extension.swift */; };
 		F5A4B33D27584E6800DC415B /* Date+Formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A4B33C27584E6800DC415B /* Date+Formatter.swift */; };
 		F5A4B33F2758914600DC415B /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A4B33E2758914600DC415B /* Common.swift */; };
@@ -35,7 +34,6 @@
 		F5C42B4F27605FC700B9E197 /* DiaryListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C42B4E27605FC700B9E197 /* DiaryListTableViewCell.swift */; };
 		F5C42B5127605FE400B9E197 /* DiaryDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C42B5027605FE400B9E197 /* DiaryDetailViewController.swift */; };
 		F5C42B5327605FFD00B9E197 /* DiaryComposeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C42B5227605FFD00B9E197 /* DiaryComposeViewController.swift */; };
-		F5C42B56276074C300B9E197 /* DiaryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C42B55276074C300B9E197 /* DiaryModel.swift */; };
 		F5C9080F275D951400ED49DD /* CreateNewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C9080E275D951400ED49DD /* CreateNewCategoryViewController.swift */; };
 		F5C90811275EECA600ED49DD /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C90810275EECA600ED49DD /* UIView+Extension.swift */; };
 		F5CABE3D276B127C003473D1 /* SelectDateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CABE3C276B127C003473D1 /* SelectDateViewController.swift */; };
@@ -67,7 +65,6 @@
 		F5388E822751FBF6005426D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F5388E852751FBF6005426D1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F5388E872751FBF6005426D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F5388E8E27521758005426D1 /* ToDoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoModel.swift; sourceTree = "<group>"; };
 		F5446D84275F41EB00B1CC05 /* NSNotification+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSNotification+Extension.swift"; sourceTree = "<group>"; };
 		F5A4B33C27584E6800DC415B /* Date+Formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Formatter.swift"; sourceTree = "<group>"; };
 		F5A4B33E2758914600DC415B /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
@@ -80,7 +77,6 @@
 		F5C42B4E27605FC700B9E197 /* DiaryListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryListTableViewCell.swift; sourceTree = "<group>"; };
 		F5C42B5027605FE400B9E197 /* DiaryDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryDetailViewController.swift; sourceTree = "<group>"; };
 		F5C42B5227605FFD00B9E197 /* DiaryComposeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryComposeViewController.swift; sourceTree = "<group>"; };
-		F5C42B55276074C300B9E197 /* DiaryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryModel.swift; sourceTree = "<group>"; };
 		F5C9080E275D951400ED49DD /* CreateNewCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewCategoryViewController.swift; sourceTree = "<group>"; };
 		F5C90810275EECA600ED49DD /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		F5CABE3C276B127C003473D1 /* SelectDateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectDateViewController.swift; sourceTree = "<group>"; };
@@ -160,7 +156,6 @@
 		F5388E8D2752174B005426D1 /* Service */ = {
 			isa = PBXGroup;
 			children = (
-				F5388E8E27521758005426D1 /* ToDoModel.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -256,7 +251,6 @@
 		F5C42B542760748200B9E197 /* Service */ = {
 			isa = PBXGroup;
 			children = (
-				F5C42B55276074C300B9E197 /* DiaryModel.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -396,7 +390,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F5C42B56276074C300B9E197 /* DiaryModel.swift in Sources */,
 				F534B3CA276191DC00F3E24D /* ImageCollectionViewCell.swift in Sources */,
 				F5CC22A52761ED9400F5E938 /* MenuCollectionViewCell.swift in Sources */,
 				F5CABE3D276B127C003473D1 /* SelectDateViewController.swift in Sources */,
@@ -418,7 +411,6 @@
 				F5064BE227647EBF006BE2E4 /* DataManager.swift in Sources */,
 				F5A4B343275A06E100DC415B /* SelectCategoryTableViewCell.swift in Sources */,
 				F534B3C427609B5100F3E24D /* SelectEmotionViewController.swift in Sources */,
-				F5388E8F27521758005426D1 /* ToDoModel.swift in Sources */,
 				F5446D85275F41EB00B1CC05 /* NSNotification+Extension.swift in Sources */,
 				F5A4B341275A06BA00DC415B /* SelectCategoryViewController.swift in Sources */,
 				F534B3C627609CFC00F3E24D /* EmotionCollectionViewCell.swift in Sources */,

@@ -12,12 +12,13 @@ class DataManager {
     static let shared = DataManager()
     private init() { }
     
-    /// todo리스트 배열
+    /// todo 배열
     var todoList = [TodoEntity]()
     
+    /// todoCategory 배열
     var categoryList = [TodoCategoryEntity]()
     
-    /// myDiary리스트 배열
+    /// myDiary 배열
     var myDiaryList = [MyDiaryEntity]()
 
     var mainContext: NSManagedObjectContext {

@@ -16,18 +16,11 @@ class SelectCategoryViewController: UIViewController {
     
     /// 옵저버 제거를 위해 토큰을 담는 배열
     var tokens = [NSObjectProtocol]()
-    
-    /// TodoCategory 배열
-    ///
-    /// 기본적으로 3개의 속성이 선언되어 있습니다.
-    var list = [
-        TodoCategory(categoryOptions: "\(Category2.duty)"),
-        TodoCategory(categoryOptions: "\(Category2.workout)"),
-        TodoCategory(categoryOptions: "\(Category2.study)")
-    ]
+
     
     
     /// Category선택 화면을 닫습니다.
+    /// - Parameter sender: Cancel버튼
     @IBAction func closeVC(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
@@ -37,10 +30,12 @@ class SelectCategoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        DataManager.shared.fetchCategory()
+        listTableView.reloadData()
+        
         // 새로운 Category를 추가합니다.
-        let token = NotificationCenter.default.addObserver(forName: .newCategoryDidInsert, object: nil, queue: .main) { [weak self] (noti) in
-            guard let newCategory = noti.userInfo?["newCategory"] as? String else { return }
-            self?.list.append(TodoCategory(categoryOptions: newCategory))
+        let token = NotificationCenter.default.addObserver(forName: .newCategoryDidInsert, object: nil, queue: .main) { [weak self] _ in
+            DataManager.shared.fetchCategory()
             self?.listTableView.reloadData()
         }
         tokens.append(token)
@@ -61,22 +56,23 @@ class SelectCategoryViewController: UIViewController {
 extension SelectCategoryViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return list.count
+        return DataManager.shared.categoryList.count
     }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SelectCategoryTableViewCell", for: indexPath) as! SelectCategoryTableViewCell
         
-        let target = list[indexPath.row]
-        cell.configure(category: target.categoryOptions)
+        let target = DataManager.shared.categoryList[indexPath.row]
+        cell.configure(category: target)
         return cell
     }
     
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            list.remove(at: indexPath.row)
+            let category = DataManager.shared.categoryList.remove(at: indexPath.row)
+            DataManager.shared.deleteCategory(entity: category)
             listTableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }
@@ -88,7 +84,7 @@ extension SelectCategoryViewController: UITableViewDataSource {
 extension SelectCategoryViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let category = list[indexPath.row]
+        let category = DataManager.shared.categoryList[indexPath.row]
         let userInfo = ["select": category]
         NotificationCenter.default.post(name: .selectCategory, object: nil, userInfo: userInfo)
         dismiss(animated: true, completion: nil)

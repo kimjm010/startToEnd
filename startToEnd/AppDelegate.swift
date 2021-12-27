@@ -23,8 +23,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if granted {
                 UNUserNotificationCenter.current().delegate = self
             }
-            
-            print("Granted: \(granted)")
         }
         return true
     }

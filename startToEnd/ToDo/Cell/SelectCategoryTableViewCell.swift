@@ -15,8 +15,8 @@ class SelectCategoryTableViewCell: UITableViewCell {
     
     
     /// 카테고리 선택 화면 테이블 뷰 셀을 초기화합니다.
-    /// - Parameter category: category 이름
-    func configure(category: String) {
-        categoryLabel.text = category
+    /// - Parameter category: TodoCategoryEntity객체
+    func configure(category: TodoCategoryEntity) {
+        categoryLabel.text = category.category
     }
 }

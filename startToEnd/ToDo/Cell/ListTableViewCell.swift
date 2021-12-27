@@ -76,6 +76,7 @@ class ListTableViewCell: UITableViewCell {
     /// 셀이 로드되면 UI를 초기화합니다.
     override func awakeFromNib() {
         super.awakeFromNib()
+        
         toggleCompleteButton.setTitle("", for: .normal)
         markHighlightButton.setTitle("", for: .normal)
     }

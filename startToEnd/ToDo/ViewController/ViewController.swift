@@ -57,7 +57,7 @@ class ViewController: UIViewController {
     var isCompleted: Bool = false
     
     /// category 저장 속성
-    var selectedCategory: TodoCategory?
+    var selectedCategory: TodoCategoryEntity?
     
     /// filtering된 요소를 저장할 배열
     var filteredList = [TodoEntity]()
@@ -101,9 +101,9 @@ class ViewController: UIViewController {
             return
         }
         
-        guard let category = selectedCategory else { return }
+        guard let category = selectedCategory?.category else { return }
         DataManager.shared.createTodo(content: content,
-                                      category: category.categoryOptions,
+                                      category: category,
                                       insertDate: Date(),
                                       notiDate: nil,
                                       isMarked: false,
@@ -121,8 +121,6 @@ class ViewController: UIViewController {
     /// 뷰 컨트롤러의 뷰 계층이 메모리에 올라간 뒤 호출됩니다.
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        print(#function)
         
         initializeData()
         setupSearchController()
@@ -200,8 +198,9 @@ class ViewController: UIViewController {
         token = NotificationCenter.default.addObserver(forName: .selectCategory,
                                                        object: nil,
                                                        queue: .main) { [weak self] (noti) in
-            guard let selected = noti.userInfo?["select"] as? TodoCategory else { return }
-            self?.cancelSelectedCategoryButton.title = "\(selected.categoryOptions)"
+            guard let selected = noti.userInfo?["select"] as? TodoCategoryEntity,
+                  let category = selected.category else { return }
+            self?.cancelSelectedCategoryButton.title = category
             self?.selectedCategory = selected
         }
         tokens.append(token)
@@ -219,7 +218,6 @@ class ViewController: UIViewController {
     func initializeData() {
         composeContainerView.applyBigRoundedRect()
         toDoTextField.inputAccessoryView = accessoryView
-        //accessoryView.sizeToFit()
         composeTodoButton.setTitle("", for: .normal)
         cancelSelectedCalendarButton.title = "\(Date().dateToString)"
         cancelSelectedCategoryButton.title = nil
@@ -273,7 +271,6 @@ extension ViewController: UITableViewDataSource {
             target = DataManager.shared.todoList[indexPath.row]
         }
         
-        cell.isMarkedImageView.isHighlighted = isMarked
         cell.configure(todo: target)
         return cell
     }
@@ -297,6 +294,7 @@ extension ViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         toDoListTableView.deselectRow(at: indexPath, animated: true)
+        print(#function, "^^", DataManager.shared.todoList[indexPath.row])
     }
     
     
@@ -306,6 +304,7 @@ extension ViewController: UITableViewDelegate {
     
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        print(#function, "&&")
         let target = DataManager.shared.todoList[indexPath.row]
         guard let cell = cell as? ListTableViewCell else { return }
         
@@ -315,6 +314,7 @@ extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         print(#function, "**")
     }
+    
 }
 
 
