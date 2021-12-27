@@ -68,25 +68,8 @@ class NotificationManager {
     }
     
     
-    func sendNotification(seconds: Double) {
-        let content = UNMutableNotificationContent()
-        content.title = "알림 테스트"
-        content.body = "테스트용입니다."
-        content.sound = .default
-        
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: seconds, repeats: false)
-        let request = UNNotificationRequest(identifier: "test", content: content, trigger: trigger)
-        
-        UNUserNotificationCenter.current().add(request) { (error) in
-            if let error = error {
-                print("ERROR2: \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    
     /// 등록한 Noticitation을 제거합니다.
     func removeScheduledNotification(todo: TodoEntity?) {
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["\(todo?.reminder)"])
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["\(String(describing: todo?.reminder))"])
     }
 }

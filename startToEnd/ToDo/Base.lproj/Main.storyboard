@@ -581,11 +581,11 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="MarkedImageView" destination="ODn-9l-on8" id="ZT2-ee-CAE"/>
                         <outlet property="datePicker" destination="tsm-yx-vas" id="xi9-3s-fVw"/>
                         <outlet property="detailTextView" destination="7zb-Na-w1l" id="Tll-1M-i9n"/>
                         <outlet property="detailTextViewPlaceholder" destination="T1o-a6-aHc" id="ubs-Dw-Rsn"/>
                         <outlet property="dueDateLabel" destination="ThC-6T-qPC" id="Jhi-Yf-RhE"/>
+                        <outlet property="markedImageView" destination="ODn-9l-on8" id="aKA-6E-a3j"/>
                         <outlet property="notiSwitch" destination="d8w-Wu-7Ke" id="6gj-Uq-IPL"/>
                         <outlet property="repeatNotiSwitch" destination="uFn-ib-TNo" id="XBn-T4-eh7"/>
                         <outlet property="repeatNotificationContainerView" destination="awx-z2-F8f" id="oA1-5A-9Pq"/>
@@ -713,7 +713,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Dq8-Nq-RNz"/>
+        <segue reference="820-Nt-GkF"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="calendar" width="16" height="16"/>

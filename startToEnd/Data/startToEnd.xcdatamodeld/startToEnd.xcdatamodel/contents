@@ -20,9 +20,13 @@
         <attribute name="notiDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="reminder" attributeType="Boolean" usesScalarValueType="YES"/>
     </entity>
+    <entity name="TodoCategory" representedClassName="TodoCategoryEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="category" attributeType="String"/>
+    </entity>
     <elements>
         <element name="MyDiary" positionX="-63" positionY="-18" width="128" height="89"/>
         <element name="PhotoGallery" positionX="-63" positionY="27" width="128" height="44"/>
         <element name="Todo" positionX="-63" positionY="9" width="128" height="164"/>
+        <element name="TodoCategory" positionX="-63" positionY="63" width="128" height="44"/>
     </elements>
 </model>

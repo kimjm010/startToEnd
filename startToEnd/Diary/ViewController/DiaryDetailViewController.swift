@@ -64,20 +64,14 @@ class DiaryDetailViewController: UIViewController {
         
         if let target = target as? MyDiaryEntity {
             
-            guard let diary = diary else { return }
-            
-            let updatedDiary = MyDiary(content: diary.content,
-                                       insertDate: diary.insertDate ?? Date(),
-                                       statusImage: UIImage(data: diary.statusImage!))
+            guard let diary = diary, let content = contentTextView.text else { return }
             
             DataManager.shared.updateDiary(entity: target,
-                                           content: updatedDiary.content ?? diary.content!,
-                                           insertDate: updatedDiary.insertDate,
-                                           statusImage: updatedDiary.statusImage?.pngData()) {
-                let userInfo = ["updated": updatedDiary]
-                NotificationCenter.default.post(name: .didUpdateDiary,
-                                                object: nil,
-                                                userInfo: userInfo)
+                                           content: content,
+                                           insertDate: diary.insertDate ?? Date(),
+                                           statusImage:UIImage(data: diary.statusImage!)?.jpegData(compressionQuality: 1),
+                                           image: nil) {
+                NotificationCenter.default.post(name: .didUpdateDiary, object: nil)
                 self.dismiss(animated: true, completion: nil)
             }
         }

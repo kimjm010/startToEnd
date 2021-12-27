@@ -21,7 +21,7 @@ class DetailViewController: UIViewController {
     
     /// todo Content 텍스트 필드
     @IBOutlet weak var todoContentTextField: UITextField!
-        
+    
     /// Mark 토글 버튼
     @IBOutlet weak var toggleIsMarkedButton: UIButton!
     
@@ -29,7 +29,7 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var selectDueDateButton: UIButton!
     
     /// Mark 이미지 뷰
-    @IBOutlet weak var MarkedImageView: UIImageView!
+    @IBOutlet weak var markedImageView: UIImageView!
     
     /// 메모 textView
     @IBOutlet weak var detailTextView: UITextView!
@@ -46,9 +46,6 @@ class DetailViewController: UIViewController {
     /// 알림 설정 switch
     @IBOutlet weak var notiSwitch: UISwitch!
     
-    /// category 배열
-    var categoryList = Category2.allCases
-    
     /// 선택된 toDoList의 카테고리 속성
     var selectedCategoryRawvalue: Int?
     
@@ -57,11 +54,6 @@ class DetailViewController: UIViewController {
     
     /// 선택된 todo
     var selectedTodo: TodoEntity?
-    
-    /// todo 데이터 저장 속성
-    var reallySelectedTodo: Todo?
-    
-    var target: NSManagedObject?
     
     /// 반복 알림 컨테이버 뷰 표시 유무 확인 속성
     var isPresent: Bool = false
@@ -75,9 +67,9 @@ class DetailViewController: UIViewController {
     @IBAction func toggleMark(_ sender: UIButton) {
         
         guard let selectedTodo = selectedTodo else { return }
-
-        MarkedImageView.isHighlighted = !(selectedTodo.isMarked) ? true : false
-        selectedTodo.isMarked = !(selectedTodo.isMarked) ? true : false
+        
+        markedImageView.isHighlighted = !(selectedTodo.isMarked) ? true : false
+        selectedTodo.isMarked = markedImageView.isHighlighted ? true : false
     }
     
     
@@ -110,23 +102,20 @@ class DetailViewController: UIViewController {
     @IBAction func updateSelectedToDo(_ sender: Any) {
         guard let content = todoContentTextField.text, let memo = detailTextView.text else { return }
         if let selectedTodo = selectedTodo {
-            selectedTodo.content = content
-            selectedTodo.isMarked = selectedTodo.isMarked
-            selectedTodo.insertDate = selectedTodo.insertDate
-            selectedTodo.reminder = selectedTodo.reminder
-            selectedTodo.notiDate = datePicker.date
-            selectedTodo.isRepeat = selectedTodo.isRepeat
-            selectedTodo.memo = memo
-            DataManager.shared.saveMainContext()
-            
-            NotificationManager.shared.sendNotification(seconds: 5)
-            print(selectedTodo.reminder)
+            DataManager.shared.updateTodo(entity: selectedTodo,
+                                          content: content,
+                                          insertDate: selectedTodo.insertDate,
+                                          notiDate: selectedTodo.notiDate,
+                                          isMarked: selectedTodo.isMarked,
+                                          reminder: selectedTodo.reminder,
+                                          isRepeat: selectedTodo.isRepeat,
+                                          memo: memo) {
+                NotificationCenter.default.post(name: .updateToDo, object: nil)
+            }
             
             if selectedTodo.reminder {
                 NotificationManager.shared.scheduleNotification(todo: selectedTodo, repeats: selectedTodo.isRepeat)
             }
-            
-            NotificationCenter.default.post(name: .updateToDo, object: nil)
         }
         
         dismiss(animated: true, completion: nil)
@@ -138,17 +127,18 @@ class DetailViewController: UIViewController {
     @IBAction func closeVC(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
-   
+    
     
     /// 필요한 데이터를 초기화합니다.
     func initializeData() {
         guard let selectedTodo = selectedTodo else { return }
-
+        
         dueDateLabel.text = selectedTodo.insertDate?.dateToString
         todoContentTextField.text = selectedTodo.content
         detailTextView.text = selectedTodo.memo
         notiSwitch.isOn = selectedTodo.reminder
         repeatNotiSwitch.isOn = selectedTodo.isRepeat
+        markedImageView.isHighlighted = selectedTodo.isMarked
         detailTextView.isHidden = false
         toggleIsMarkedButton.setTitle("", for: .normal)
         selectDueDateButton.setTitle("", for: .normal)

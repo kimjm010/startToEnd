@@ -15,6 +15,8 @@ class DataManager {
     /// todo리스트 배열
     var todoList = [TodoEntity]()
     
+    var categoryList = [TodoCategoryEntity]()
+    
     /// myDiary리스트 배열
     var myDiaryList = [MyDiaryEntity]()
 

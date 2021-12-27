@@ -40,7 +40,7 @@ class DiaryComposeViewController: UIViewController {
     @IBOutlet weak var composeTextViewBottonConstraint: NSLayoutConstraint!
     
     /// 일기 정보 저장 속성
-    var diary: MyDiary?
+    var diary: MyDiaryEntity?
     
     /// 일기에 첨부할 이미지 배열
     var imageList = [UIImage]()
@@ -65,17 +65,13 @@ class DiaryComposeViewController: UIViewController {
     @IBAction func saveDiary(_ sender: Any) {
         
         let image = UIImage(data: photos.first?.image ?? Data())
+        guard let content = contentTextView.text, let status = emotionImageView.image else { return }
         
-        let newDiary = MyDiary(content: contentTextView.text,
-                               insertDate: datePicker.date,
-                               statusImage: emotionImageView.image,
-                               images: image)
-                            
-        DataManager.shared.createDiary(content: newDiary.content,
-                                       insertDate: newDiary.insertDate,
-                                       statusImage: newDiary.statusImage?.pngData()) {
-            let userInfo = ["newDiary": newDiary]
-            NotificationCenter.default.post(name: .didInsertNewDiary, object: nil, userInfo: userInfo)
+        DataManager.shared.createDiary(content: content,
+                                       insertDate: datePicker.date,
+                                       statusImage: status.pngData(),
+                                       image: image?.pngData()) {
+            NotificationCenter.default.post(name: .didInsertNewDiary, object: nil)
             self.dismiss(animated: true, completion: nil)
         }
     }

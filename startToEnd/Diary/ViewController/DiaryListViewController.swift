@@ -23,16 +23,16 @@ class DiaryListViewController: UIViewController {
     
     @IBOutlet weak var dimmingView: UIView!
     
-    /// 화면에 표시한 MyDiary 배열
-    var displayedList = [MyDiary]()
-    
-    var sortedList = [MyDiary]()
+    var sortedList = [MyDiaryEntity]()
     
     var updatedIndexPath: IndexPath?
     
     var isShow: Bool = false
     
     var list = [MyDiaryEntity]()
+    
+    /// 옵저버 제거를 위해 토큰을 담는 배열
+    var tokens = [NSObjectProtocol]()
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let cell = sender as? UITableViewCell, let indexPath = listTableView.indexPath(for: cell) {
@@ -79,8 +79,11 @@ class DiaryListViewController: UIViewController {
         super.viewWillAppear(animated)
         
         dimmingView.alpha = 0.0
-        sortedList = dummyDiaryList.sorted {
-            return $0.insertDate > $1.insertDate
+        
+        sortedList = DataManager.shared.myDiaryList.sorted {
+            guard let firstDate = $0.insertDate, let secondDate = $1.insertDate else { return false }
+            
+            return firstDate > secondDate
         }
         
         listTableView.reloadData()
@@ -93,19 +96,26 @@ class DiaryListViewController: UIViewController {
         
         initializeData()
         
-        
         list = DataManager.shared.fetchDiary()
         listTableView.reloadData()
         
-        NotificationCenter.default.addObserver(forName: .didInsertNewDiary, object: nil, queue: .main) { [weak self] _ in
+        var token = NotificationCenter.default.addObserver(forName: .didInsertNewDiary, object: nil, queue: .main) { [weak self] _ in
             self?.list = DataManager.shared.fetchDiary()
             self?.listTableView.reloadData()
         }
+        tokens.append(token)
  
         
-        NotificationCenter.default.addObserver(forName: .didUpdateDiary, object: nil, queue: .main) { [weak self] _ in
+        token = NotificationCenter.default.addObserver(forName: .didUpdateDiary, object: nil, queue: .main) { [weak self] _ in
             self?.list = DataManager.shared.fetchDiary()
             self?.listTableView.reloadData()
+        }
+        tokens.append(token)
+    }
+    
+    deinit {
+        for token in tokens {
+            NotificationCenter.default.removeObserver(token)
         }
     }
     
@@ -113,8 +123,10 @@ class DiaryListViewController: UIViewController {
     /// 필요한 데이터를 초기화합니다.
     func initializeData() {
         
-        sortedList = dummyDiaryList.sorted {
-            return $0.insertDate > $1.insertDate
+        sortedList = DataManager.shared.myDiaryList.sorted {
+            guard let firstDate = $0.insertDate, let secondDate = $1.insertDate else { return false }
+            
+            return firstDate > secondDate
         }
         
         composeListContainerView.isHidden = true

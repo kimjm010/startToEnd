@@ -8,10 +8,6 @@
 import UIKit
 import CoreData
 
-extension NSNotification.Name {
-    static let updatedIsMarked = Notification.Name(rawValue: "updatedIsMarked")
-}
-
 
 /// 일기장 리스트 테이블 뷰 셀
 class ListTableViewCell: UITableViewCell {
@@ -47,23 +43,22 @@ class ListTableViewCell: UITableViewCell {
     /// 하이라이트 여부 저장 속성
     var isMarked: Bool = false
     
-    var target: NSManagedObject?
+    /// updated여부
+    var updated: Bool = false
+    
+    /// 선택된 Todo객체
+    var selectedTodo: TodoEntity?
+    
+    /// 옵저버 제거를 위해 토큰을 담는 배열
+    var tokens = [NSObjectProtocol]()
     
     
     /// 하이라이트 표시를 토글합니다.
     ///
     /// - Parameter sender: Mark Highlight 버튼
-    @IBAction func toggleMarked(_ sender: UIButton) {
+    @IBAction func toggleMarked(_ sender: Any) {
         isMarked = isMarked ? false : true
         isMarkedImageView.isHighlighted = isMarked ? true : false
-        
-        if let target = target as? TodoEntity {
-            print(isMarked)
-            DataManager.shared.updateIsMarked(entity: target, ismarked: isMarked) {
-                let userInfo = ["isMarked": self.isMarked]
-                NotificationCenter.default.post(name: .updatedIsMarked, object: nil, userInfo: userInfo)
-            }
-        }
     }
     
     
@@ -81,13 +76,13 @@ class ListTableViewCell: UITableViewCell {
     /// 셀이 로드되면 UI를 초기화합니다.
     override func awakeFromNib() {
         super.awakeFromNib()
-        
         toggleCompleteButton.setTitle("", for: .normal)
         markHighlightButton.setTitle("", for: .normal)
     }
     
     
     /// 일기장 리스트 테이블 뷰 셀을 초기화합니다.
+    /// - Parameter todo: todoEntity객체
     func configure(todo: TodoEntity) {
         toDoLabel.text = todo.content
         dateLabel.text = todo.insertDate?.dateToString

@@ -24,7 +24,6 @@
 		F5388E862751FBF6005426D1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F5388E842751FBF6005426D1 /* LaunchScreen.storyboard */; };
 		F5388E8F27521758005426D1 /* ToDoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5388E8E27521758005426D1 /* ToDoModel.swift */; };
 		F5446D85275F41EB00B1CC05 /* NSNotification+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5446D84275F41EB00B1CC05 /* NSNotification+Extension.swift */; };
-		F5A4083127546F6E00F08378 /* CategoryListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A4083027546F6E00F08378 /* CategoryListCollectionViewCell.swift */; };
 		F5A4B33D27584E6800DC415B /* Date+Formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A4B33C27584E6800DC415B /* Date+Formatter.swift */; };
 		F5A4B33F2758914600DC415B /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A4B33E2758914600DC415B /* Common.swift */; };
 		F5A4B341275A06BA00DC415B /* SelectCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A4B340275A06BA00DC415B /* SelectCategoryViewController.swift */; };
@@ -70,7 +69,6 @@
 		F5388E872751FBF6005426D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F5388E8E27521758005426D1 /* ToDoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoModel.swift; sourceTree = "<group>"; };
 		F5446D84275F41EB00B1CC05 /* NSNotification+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSNotification+Extension.swift"; sourceTree = "<group>"; };
-		F5A4083027546F6E00F08378 /* CategoryListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryListCollectionViewCell.swift; sourceTree = "<group>"; };
 		F5A4B33C27584E6800DC415B /* Date+Formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Formatter.swift"; sourceTree = "<group>"; };
 		F5A4B33E2758914600DC415B /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		F5A4B340275A06BA00DC415B /* SelectCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCategoryViewController.swift; sourceTree = "<group>"; };
@@ -182,7 +180,6 @@
 		F5388E93275218B2005426D1 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
-				F5A4083027546F6E00F08378 /* CategoryListCollectionViewCell.swift */,
 				F5E11BA62755D894007C582A /* ListTableViewCell.swift */,
 				F5A4B342275A06E100DC415B /* SelectCategoryTableViewCell.swift */,
 			);
@@ -414,7 +411,6 @@
 				F5CC22A32761E64B00F5E938 /* DisplayImagesCollectionViewCell.swift in Sources */,
 				F534B3C827618E2000F3E24D /* ImageDisplayViewController.swift in Sources */,
 				F5C90811275EECA600ED49DD /* UIView+Extension.swift in Sources */,
-				F5A4083127546F6E00F08378 /* CategoryListCollectionViewCell.swift in Sources */,
 				F5C42B4C27605F9A00B9E197 /* DiaryListViewController.swift in Sources */,
 				F5A4B33F2758914600DC415B /* Common.swift in Sources */,
 				F5B38E86276C828E00A8D596 /* NotificationManager.swift in Sources */,

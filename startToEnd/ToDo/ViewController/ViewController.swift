@@ -101,28 +101,19 @@ class ViewController: UIViewController {
             return
         }
         
-        let newTodo = Todo(content: content,
-                           category: selectedCategory ?? TodoCategory(categoryOptions: "\(Category2.duty)"),
-                           insertDate: Date(),
-                           notiDate: nil,
-                           isMarked: false,
-                           isCompleted: false,
-                           reminder: false,
-                           isRepeat: false,
-                           memo: nil)
-        
-        DataManager.shared.createTodo(content: newTodo.content,
-                                      category: newTodo.category.categoryOptions,
-                                      insertDate: newTodo.insertDate,
-                                      notiDate: newTodo.notiDate,
-                                      isMarked: newTodo.isMarked,
-                                      isCompleted: newTodo.isCompleted,
-                                      reminder: newTodo.reminder,
-                                      isRepeat: newTodo.isRepeat,
-                                      memo: newTodo.memo) {[weak self] in
-            let userInfo = ["newTodo": newTodo]
-            NotificationCenter.default.post(name: .didInsertNewTodo, object: nil, userInfo: userInfo)
-            self?.toDoTextField.text = nil
+        guard let category = selectedCategory else { return }
+        DataManager.shared.createTodo(content: content,
+                                      category: category.categoryOptions,
+                                      insertDate: Date(),
+                                      notiDate: nil,
+                                      isMarked: false,
+                                      isCompleted: false,
+                                      reminder: false,
+                                      isRepeat: false,
+                                      memo: nil) {
+            NotificationCenter.default.post(name: .didInsertNewTodo, object: nil)
+            self.toDoTextField.text = nil
+            self.cancelSelectedCategoryButton.title = nil
         }
     }
     
@@ -195,18 +186,11 @@ class ViewController: UIViewController {
         tokens.append(token)
         
         
-        token = NotificationCenter.default.addObserver(forName: .updatedIsMarked,
-                                                       object: nil,
-                                                       queue: .main) { [weak self] _ in
-            DataManager.shared.fetchTodo()
-            self?.toDoListTableView.reloadData()
-        }
-        tokens.append(token)
-        
-        
         token = NotificationCenter.default.addObserver(forName: .updateToDo,
                                                        object: nil,
-                                                       queue: .main) { [weak self] _ in
+                                                       queue: .main) { [weak self] (noti) in
+            guard let updated = noti.userInfo?["updated"] as? Bool else { return }
+            self?.isMarked = updated
             DataManager.shared.fetchTodo()
             self?.toDoListTableView.reloadData()
         }
@@ -235,7 +219,7 @@ class ViewController: UIViewController {
     func initializeData() {
         composeContainerView.applyBigRoundedRect()
         toDoTextField.inputAccessoryView = accessoryView
-        accessoryView.sizeToFit()
+        //accessoryView.sizeToFit()
         composeTodoButton.setTitle("", for: .normal)
         cancelSelectedCalendarButton.title = "\(Date().dateToString)"
         cancelSelectedCategoryButton.title = nil
@@ -289,6 +273,7 @@ extension ViewController: UITableViewDataSource {
             target = DataManager.shared.todoList[indexPath.row]
         }
         
+        cell.isMarkedImageView.isHighlighted = isMarked
         cell.configure(todo: target)
         return cell
     }
@@ -317,6 +302,18 @@ extension ViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
         return IndexPath(row: 0, section: 0)
+    }
+    
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let target = DataManager.shared.todoList[indexPath.row]
+        guard let cell = cell as? ListTableViewCell else { return }
+        
+        cell.isMarkedImageView.isHighlighted = target.isMarked
+    }
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        print(#function, "**")
     }
 }
 
