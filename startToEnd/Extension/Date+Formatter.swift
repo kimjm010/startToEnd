@@ -10,12 +10,8 @@ import Foundation
 fileprivate let formatter = DateFormatter()
 
 extension Date {
-    var dateTimeToString: String {
-        formatter.dateFormat = "YYYY-MM-dd"
-        formatter.locale = Locale(identifier: "ko_kr")
-        return formatter.string(from: self)
-    }
     
+    /// todo, diary에 표시할 날짜 형식
     var dateToString: String {
         formatter.dateFormat = "YY.MM.dd"
         formatter.locale = Locale(identifier: "en_us")

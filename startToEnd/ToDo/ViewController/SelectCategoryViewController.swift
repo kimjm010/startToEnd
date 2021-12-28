@@ -55,11 +55,21 @@ class SelectCategoryViewController: UIViewController {
 
 extension SelectCategoryViewController: UITableViewDataSource {
     
+    /// 카테고리 수를 리턴합니다.
+    /// - Parameters:
+    ///   - tableView: listTableView
+    ///   - section: 카테고리 목록을 나누는 section Index
+    /// - Returns: 카테고리 개수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return DataManager.shared.categoryList.count
     }
     
     
+    /// 카테고리 셀을 설정합니다.
+    /// - Parameters:
+    ///   - tableView: listTableView
+    ///   - indexPath: 카테고리 셀의 indexPath
+    /// - Returns: 카테고리 셀
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SelectCategoryTableViewCell", for: indexPath) as! SelectCategoryTableViewCell
         
@@ -69,6 +79,11 @@ extension SelectCategoryViewController: UITableViewDataSource {
     }
     
     
+    /// 편집스타일에 따라 다른 동작을 실행합니다.
+    /// - Parameters:
+    ///   - tableView: listTableView
+    ///   - editingStyle: 편집 스타일
+    ///   - indexPath: 해당 셀의 indexPath
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let category = DataManager.shared.categoryList.remove(at: indexPath.row)
@@ -83,6 +98,10 @@ extension SelectCategoryViewController: UITableViewDataSource {
 
 extension SelectCategoryViewController: UITableViewDelegate {
     
+    /// 카테고리 셀이 선택되었을 때 동작을 처리합니다.
+    /// - Parameters:
+    ///   - tableView: listTableView
+    ///   - indexPath: 선택된 셀의 indexPath
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let category = DataManager.shared.categoryList[indexPath.row]
         let userInfo = ["select": category]

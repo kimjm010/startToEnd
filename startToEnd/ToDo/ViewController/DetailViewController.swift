@@ -11,6 +11,7 @@ import CoreData
 import DropDown
 
 
+/// todo Detail 화면
 class DetailViewController: UIViewController {
     
     /// 반복 설정 컨테이너 뷰
@@ -182,6 +183,7 @@ class DetailViewController: UIViewController {
         tokens.append(token)
         
         
+        // 기한을 변경합니다.
         token = NotificationCenter.default.addObserver(forName: .updateDueDate, object: nil, queue: .main, using: { [weak self] (noti) in
             guard let updatedDueDate = noti.userInfo?["dueDate"] as? Date else { return }
             self?.selectedTodo?.insertDate = updatedDueDate
@@ -203,6 +205,7 @@ class DetailViewController: UIViewController {
             NotificationCenter.default.removeObserver(token)
         }
         
+        // 등록된 localNotification을 제거합니다.
         NotificationManager.shared.removeScheduledNotification(todo: selectedTodo)
     }
 }

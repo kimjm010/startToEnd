@@ -165,12 +165,6 @@
                                     <constraint firstItem="teF-jI-Qpy" firstAttribute="top" secondItem="NMb-iI-P3w" secondAttribute="top" id="dWn-4h-MbB"/>
                                 </constraints>
                             </view>
-                            <view alpha="0.0" contentMode="scaleToFill" id="BA5-PH-VBl">
-                                <rect key="frame" x="0.0" y="45" width="414" height="805"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <viewLayoutGuide key="safeArea" id="AaH-99-qD0"/>
-                                <color key="backgroundColor" systemColor="systemGray6Color"/>
-                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -199,7 +193,6 @@
                         <outlet property="composeContainerView" destination="h2G-fS-smW" id="fA8-qA-zOF"/>
                         <outlet property="composeContainerViewBottomConstraint" destination="HVc-rG-WLG" id="ncQ-pj-dFk"/>
                         <outlet property="composeTodoButton" destination="teF-jI-Qpy" id="47N-1C-Fcg"/>
-                        <outlet property="dimmingView" destination="BA5-PH-VBl" id="goh-Ti-QvB"/>
                         <outlet property="selectCalenderButton" destination="h2v-Ie-vTZ" id="mlm-Cq-yJo"/>
                         <outlet property="selectCategoryButton" destination="KvU-Ir-1pD" id="AhU-k8-4s0"/>
                         <outlet property="toDoListTableView" destination="2Qt-Tr-vWM" id="NH8-ga-F7o"/>

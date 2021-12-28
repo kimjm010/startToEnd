@@ -10,7 +10,6 @@ import UIKit
 
 extension  UIViewController {
     
-    
     /// 입력된 toDoList가 없는 경우 알림 표시
     /// - Parameters:
     ///   - title:알림의 title
@@ -27,6 +26,11 @@ extension  UIViewController {
     }
     
     
+    /// 앨범 접근 권한에 따른 알림을 표시합니다.
+    /// - Parameters:
+    ///   - title: 알림의 title
+    ///   - message: 알림의 message
+    ///   - handler: goToSettingAction 클릭 이후의 동작
     func alertAccessPhotoLibrary(title: String? = "\"StartToEnd\" Woul Like to Access Your Photos", message: String? = "This app requires access to photo library", handler: ((UIAlertAction) -> Void)? = nil) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         

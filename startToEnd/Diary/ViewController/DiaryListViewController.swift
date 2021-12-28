@@ -200,7 +200,7 @@ extension DiaryListViewController: UITableViewDataSource {
     /// - Parameters:
     ///   - tableView: 일기 목록 테이블 뷰
     ///   - editingStyle: 편집 스타일
-    ///   - indexPath: 삭제할 일기 목록 indexPath
+    ///   - indexPath: 해당 셀의 indexPath
     func tableView(_ tableView: UITableView,
                    commit editingStyle: UITableViewCell.EditingStyle,
                    forRowAt indexPath: IndexPath) {

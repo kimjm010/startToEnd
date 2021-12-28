@@ -8,6 +8,7 @@
 import UIKit
 
 
+/// 카테고리 추가 화면
 class CreateNewCategoryViewController: UIViewController {
     
     /// category 텍스트 필드
@@ -23,6 +24,7 @@ class CreateNewCategoryViewController: UIViewController {
             return
         }
         
+        // 카테고리를 추가합니다.
         DataManager.shared.createCategory(category: newCategory) {
             NotificationCenter.default.post(name: .newCategoryDidInsert, object: nil)
             self.navigationController?.popViewController(animated: true)

@@ -9,11 +9,7 @@ import UIKit
 import CoreData
 
 
-extension NSNotification.Name {
-    
-}
-
-
+/// 일기 Detail 화면
 class DiaryDetailViewController: UIViewController {
     
     /// 배경 이미지 뷰
