@@ -7,38 +7,55 @@
 
 import UIKit
 
+
+/// 일기장 목록 화면
 class DiaryListViewController: UIViewController {
     
+    /// 일기장 목록 컨테이너 뷰
     @IBOutlet weak var composeListContainerView: UIStackView!
     
+    /// 칭찬하기 작성 버튼
     @IBOutlet weak var composeNormalDiaryButton: UIButton!
     
+    /// 보완하기 작성 버튼
     @IBOutlet weak var composeRegretDiaryButton: UIButton!
     
+    /// 감사하기 작성 버튼
     @IBOutlet weak var composeThxDiaryButton: UIButton!
     
+    /// 일기 작성 버튼
     @IBOutlet weak var showComposeMenuButton: UIButton!
     
+    /// 일기 표시 테이블 뷰
     @IBOutlet weak var listTableView: UITableView!
     
+    /// 디밍 뷰
+    ///
+    /// 일기 작성 목록이 표시되는 경우 디밍뷰를 표시합니다.
     @IBOutlet weak var dimmingView: UIView!
     
+    /// 정렬된 일기 목록
     var sortedList = [MyDiaryEntity]()
     
-    var updatedIndexPath: IndexPath?
-    
+    /// 일기 목록 표시 여부
+    ///
+    /// isShow 여부에 따라 dimmingView를 표시 여부가 달라집니다.
     var isShow: Bool = false
-    
-    var list = [MyDiaryEntity]()
     
     /// 옵저버 제거를 위해 토큰을 담는 배열
     var tokens = [NSObjectProtocol]()
     
+    
+    /// 곧 실행될 뷰 컨트롤러를 준비합니다.
+    ///
+    /// 새로운 뷰 컨트롤러가 실행되기 전에 설정할 수 있습니다.
+    /// - Parameters:
+    ///   - segue: 호출된 segue
+    ///   - sender: segue가 시작된 객체
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let cell = sender as? UITableViewCell, let indexPath = listTableView.indexPath(for: cell) {
-            updatedIndexPath = indexPath
             if let vc = segue.destination as? DiaryDetailViewController {
-                vc.diary = list[indexPath.row]
+                vc.diary = DataManager.shared.myDiaryList[indexPath.row]
             }
         }
         
@@ -61,6 +78,8 @@ class DiaryListViewController: UIViewController {
     }
     
     
+    /// 해당 일기 작성 화면으로 이동합니다.
+    /// - Parameter sender: compose 버튼
     @IBAction func moveToComposeScene(_ sender: UIButton) {
         switch sender.tag {
         case 101:
@@ -75,6 +94,7 @@ class DiaryListViewController: UIViewController {
     }
     
     /// 뷰가 화면에 표시되기 직전에 호출됩니다.
+    /// - Parameter animated: 애니메이션 여부
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -96,23 +116,27 @@ class DiaryListViewController: UIViewController {
         
         initializeData()
         
-        list = DataManager.shared.fetchDiary()
+        DataManager.shared.fetchDiary()
         listTableView.reloadData()
         
+        // 일기를 추가합니다.
         var token = NotificationCenter.default.addObserver(forName: .didInsertNewDiary, object: nil, queue: .main) { [weak self] _ in
-            self?.list = DataManager.shared.fetchDiary()
+            DataManager.shared.fetchDiary()
             self?.listTableView.reloadData()
         }
         tokens.append(token)
  
         
+        // 작성된 일기를 업데이트 합니다.
         token = NotificationCenter.default.addObserver(forName: .didUpdateDiary, object: nil, queue: .main) { [weak self] _ in
-            self?.list = DataManager.shared.fetchDiary()
+            DataManager.shared.fetchDiary()
             self?.listTableView.reloadData()
         }
         tokens.append(token)
     }
     
+    
+    /// 소멸자에서 옵저버를 제거
     deinit {
         for token in tokens {
             NotificationCenter.default.removeObserver(token)
@@ -134,6 +158,8 @@ class DiaryListViewController: UIViewController {
     }
     
     
+    /// 뷰가 계층에서 사라지기 전에 호출됩니다.
+    /// - Parameter animated: 애니메이션 여부
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
@@ -146,27 +172,42 @@ class DiaryListViewController: UIViewController {
 
 extension DiaryListViewController: UITableViewDataSource {
     
+    /// 일기의 수를 리턴합니다.
+    /// - Parameters:
+    ///   - tableView: 일기 목록 테이블 뷰
+    ///   - section: 일기 목록을 나누는 section Index
+    /// - Returns: 일기 개수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return list.count
+        return DataManager.shared.myDiaryList.count
     }
     
-    
+
+    /// 일기 목록 셀을 설정합니다.
+    /// - Parameters:
+    ///   - tableView: 일기 목록 테이블 뷰
+    ///   - indexPath: 일기 목록 셀의 indexPath
+    /// - Returns: 일기 목록 셀
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "DiaryListTableViewCell", for: indexPath) as! DiaryListTableViewCell
         
-        let diary = list[indexPath.row]
+        let diary = DataManager.shared.myDiaryList[indexPath.row]
         cell.configure(diary: diary)
         return cell
     }
     
     
+    /// 편집스타일이 삭제인경우 일기 목록을 삭제합니다.
+    /// - Parameters:
+    ///   - tableView: 일기 목록 테이블 뷰
+    ///   - editingStyle: 편집 스타일
+    ///   - indexPath: 삭제할 일기 목록 indexPath
     func tableView(_ tableView: UITableView,
                    commit editingStyle: UITableViewCell.EditingStyle,
                    forRowAt indexPath: IndexPath) {
         
         switch editingStyle {
         case .delete:
-            let diary = list.remove(at: indexPath.row)
+            let diary = DataManager.shared.myDiaryList.remove(at: indexPath.row)
             DataManager.shared.deleteDiary(entity: diary)
             listTableView.deleteRows(at: [indexPath], with: .automatic)
         default:
@@ -180,6 +221,12 @@ extension DiaryListViewController: UITableViewDataSource {
 
 extension DiaryListViewController: UITableViewDelegate {
     
+    /// 일기 목록 셀이 선택되었을 때 동작을 처리합니다.
+    ///
+    /// 선택 상태를 즉시 해제합니다.
+    /// - Parameters:
+    ///   - tableView: 일기 목록 테이블 뷰
+    ///   - indexPath: 선택된 항목의 indexPath
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }

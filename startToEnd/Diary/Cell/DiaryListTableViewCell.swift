@@ -7,6 +7,8 @@
 
 import UIKit
 
+
+/// 일기 목록을 표시하는 테이블 뷰 셀
 class DiaryListTableViewCell: UITableViewCell {
 
     /// 일기 내용

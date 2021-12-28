@@ -7,8 +7,11 @@
 
 import UIKit
 
+
+/// 감정 이미지를 표시하는 컬렉션 뷰 셀
 class EmotionCollectionViewCell: UICollectionViewCell {
     
+    /// 감정 이미지 뷰
     @IBOutlet weak var emotiomImageView: UIImageView!
     
     

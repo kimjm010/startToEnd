@@ -10,42 +10,52 @@ import CoreData
 
 
 extension NSNotification.Name {
-    static let didUpdateDiary = Notification.Name(rawValue: "didUpdateDiary")
+    
 }
 
 
 class DiaryDetailViewController: UIViewController {
     
+    /// 배경 이미지 뷰
     @IBOutlet weak var emotionBackgroungImageView: UIImageView!
     
+    /// 첨부한 이미지 표시 컬렉션 뷰
     @IBOutlet weak var listCollectionView: UICollectionView!
     
+    /// 감정 이모지 변경 버튼
     @IBOutlet weak var changeEmotionImageButton: UIButton!
     
+    /// 날자 레이블 컨테이너 뷰
     @IBOutlet weak var dateLabelContainerView: UIView!
     
+    /// 일기 내용 작성 텍스트 뷰
     @IBOutlet weak var contentTextView: UITextView!
     
+    /// 날짜 레이블
     @IBOutlet weak var createdDateLabel: UILabel!
     
+    /// 구분하기위한 뷰
     @IBOutlet weak var separationView: UIView!
     
+    /// MyDiaryEntity 객체
     var diary: MyDiaryEntity?
     
+    /// 첨부한 이미지 배열
     var imageList = [UIImage]()
     
+    /// PhotoGalleryEntity 객체
     var photos = [PhotoGalleryEntity]()
     
     var target: NSManagedObject?
 
 
     /// 뷰가 화면에 표시되기 직전에 호출됩니다.
+    /// - Parameter animated: 애니메이션 여부
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         listCollectionView.isHidden = imageList.count == 0
         separationView.isHidden = listCollectionView.isHidden
-        
     }
     
     
@@ -62,14 +72,14 @@ class DiaryDetailViewController: UIViewController {
             self?.emotionBackgroungImageView.image = newEmotion
         }
         
-        if let target = target as? MyDiaryEntity {
-            
-            guard let diary = diary, let content = contentTextView.text else { return }
-            
-            DataManager.shared.updateDiary(entity: target,
+        // 다이어리를 업데이트 합니다.
+        if let diary = diary,
+            let content = contentTextView.text,
+            let data = diary.statusImage {
+            DataManager.shared.updateDiary(entity: diary,
                                            content: content,
                                            insertDate: diary.insertDate ?? Date(),
-                                           statusImage:UIImage(data: diary.statusImage!)?.jpegData(compressionQuality: 1),
+                                           statusImage: UIImage(data: data)?.pngData(),
                                            image: nil) {
                 NotificationCenter.default.post(name: .didUpdateDiary, object: nil)
                 self.dismiss(animated: true, completion: nil)
@@ -108,6 +118,8 @@ class DiaryDetailViewController: UIViewController {
     }
     
     
+    /// 뷰가 계층에서 사라지기 전에 호출됩니다.
+    /// - Parameter animated: 애니메이션 여부
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
@@ -115,7 +127,8 @@ class DiaryDetailViewController: UIViewController {
     
     /// 필요한 데이터를 초기화합니다.
     func initializeData() {
-        guard let diary = diary, let defaultImageData = UIImage(named: "1")?.pngData() else { return }
+        guard let diary = diary,
+                let defaultImageData = UIImage(named: "1")?.pngData() else { return }
         
         dateLabelContainerView.applyBigRoundedRect()
         emotionBackgroungImageView.image = UIImage(data: diary.statusImage ?? defaultImageData)
@@ -131,6 +144,8 @@ class DiaryDetailViewController: UIViewController {
 
 extension DiaryDetailViewController: UITextViewDelegate {
     
+    /// 편집 후 편집 여부에 따라 일기의 내용을 업데이트 합니다.
+    /// - Parameter textView: contentTextView
     func textViewDidEndEditing(_ textView: UITextView) {
         guard let updated = textView.text else { return }
         
@@ -152,11 +167,21 @@ extension DiaryDetailViewController: UITextViewDelegate {
 
 extension DiaryDetailViewController: UICollectionViewDataSource {
     
+    /// 이미지의 수를 리턴합니다.
+    /// - Parameters:
+    ///   - collectionView: 이미지 목록 컬렉션 뷰
+    ///   - section: 이미지 목록을 나누는 section indexPath
+    /// - Returns: 첨부한 이미지 개수
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return imageList.count
     }
     
     
+    /// 첨부한 이미지 목록 셀을 설정합니다.
+    /// - Parameters:
+    ///   - collectionView: 이미지 컬렉션 뷰
+    ///   - indexPath: 이미지 셀의 indexPath
+    /// - Returns: 이미지 셀
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCollectionViewCell", for: indexPath) as! ImageCollectionViewCell
         
@@ -170,6 +195,13 @@ extension DiaryDetailViewController: UICollectionViewDataSource {
 
 
 extension DiaryDetailViewController: UICollectionViewDelegateFlowLayout {
+    
+    ///  이미지 셀의 사이즈를 리턴합니다.
+    /// - Parameters:
+    ///   - collectionView: 이미지 컬렉션 뷰
+    ///   - collectionViewLayout: 컬렉션 뷰의 레이아웃 정보
+    ///   - indexPath: 이미지 셀의 indexPath
+    /// - Returns: 이미지 셀의 사이즈
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 100, height: 100)
     }

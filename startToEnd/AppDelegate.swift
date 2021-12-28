@@ -8,11 +8,6 @@
 import UIKit
 import CoreData
 
-struct ActionIdentifier {
-    static let cancel = "ACTION_CANCEL_NOTI"
-    static let setting = "ACTION_SETTING"
-    private init() { }
-}
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -27,11 +22,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    // MARK: UISceneSession Lifecycle
+    
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
 
+    
     func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
     }
 }

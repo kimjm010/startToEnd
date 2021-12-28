@@ -10,6 +10,7 @@ import UIKit
 
 class CreateNewCategoryViewController: UIViewController {
     
+    /// category 텍스트 필드
     @IBOutlet weak var composeNewCategoryTextField: UITextField!
     
     
@@ -26,10 +27,6 @@ class CreateNewCategoryViewController: UIViewController {
             NotificationCenter.default.post(name: .newCategoryDidInsert, object: nil)
             self.navigationController?.popViewController(animated: true)
         }
-        
-//        let userInfo = ["newCategory": newCategory]
-//        NotificationCenter.default.post(name: .newCategoryDidInsert, object: nil, userInfo: userInfo)
-//        navigationController?.popViewController(animated: true)
     }
     
     

@@ -31,22 +31,18 @@ extension DataManager {
     
     
     // FetchMyDiary
-    func fetchDiary() -> [MyDiaryEntity] {
-        var list = [MyDiaryEntity]()
-        
+    func fetchDiary() {
         mainContext.performAndWait {
             let request: NSFetchRequest<MyDiaryEntity> = MyDiaryEntity.fetchRequest()
             let sortByDateAsc = NSSortDescriptor(key: "insertDate", ascending: false)
             request.sortDescriptors = [sortByDateAsc]
             
             do {
-                list = try mainContext.fetch(request)
+                myDiaryList = try mainContext.fetch(request)
             } catch {
                 print(error.localizedDescription)
             }
         }
-        
-        return list
     }
     
     

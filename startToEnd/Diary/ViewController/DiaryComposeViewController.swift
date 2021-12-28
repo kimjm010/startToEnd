@@ -10,33 +10,46 @@ import AVFoundation
 import CoreData
 
 
-extension NSNotification.Name {
-    static let didInsertNewDiary = Notification.Name(rawValue: "didInsertNewDiary")
-}
-
-
+/// 일기 작성 화면
 class DiaryComposeViewController: UIViewController {
     
+    /// 이미지 컬렉션 뷰
+    ///
+    /// 첨부할 이미지를 표시합니다.
     @IBOutlet weak var imageCollectionView: UICollectionView!
     
+    /// 감정상태 선택 버튼
     @IBOutlet weak var selectEmotionImageButton: UIButton!
     
+    /// 감정상태를 표시하는 이미지 뷰
     @IBOutlet weak var emotionImageView: UIImageView!
 
-    @IBOutlet weak var currentLocationLabel: UILabel!
+    /// 위치 레이블
+    @IBOutlet weak var memorialLocationLabel: UILabel!
     
+    /// 일기 내용 텍스트 뷰
     @IBOutlet weak var contentTextView: UITextView!
     
+    /// placeholder레이블
+    ///
+    /// 일기 작성 방법을 설명합니다.
     @IBOutlet weak var placeholderLabel: UILabel!
     
+    /// 데이트 피커
+    ///
+    /// 일기 입력 날짜를 선택합니다.
     @IBOutlet weak var datePicker: UIDatePicker!
     
+    /// 배경 뷰
     @IBOutlet weak var backgroungView: UIView!
     
+    /// 앨범 버튼을 포함한 툴바
     @IBOutlet var accessoryBar: UIToolbar!
     
+    /// 이미지 separation뷰
     @IBOutlet weak var separationView: UIView!
     
+    /// 텍스트 뷰 bottom 제약
     @IBOutlet weak var composeTextViewBottonConstraint: NSLayoutConstraint!
     
     /// 일기 정보 저장 속성
@@ -45,12 +58,16 @@ class DiaryComposeViewController: UIViewController {
     /// 일기에 첨부할 이미지 배열
     var imageList = [UIImage]()
     
+    /// 이미지 저장 속성
     var photos = [PhotoGalleryEntity]()
 
-    
+    /// 일기 목록을 확인하는 속성
+    ///
+    /// tag값에 따라 다른 배경의 일기작성 화면을 표시합니다.
     var composeTag: Int?
     
-    var token: NSManagedObject?
+    /// 옵저버 제거를 위해 토큰을 담는 배열
+    var tokens = [NSObjectProtocol]()
     
     
     /// 일기 작성 화면을 닫습니다.
@@ -94,19 +111,24 @@ class DiaryComposeViewController: UIViewController {
         photos = DataManager.shared.retrieveImagesData()
         imageCollectionView.reloadData()
         
-        NotificationCenter.default.addObserver(forName: .didSelectEmotionImage, object: nil, queue: .main) { [weak self] (noti) in
+        // 선택한 감정상태를 배경화면으로 지정합니다.
+        var token = NotificationCenter.default.addObserver(forName: .didSelectEmotionImage, object: nil, queue: .main) { [weak self] (noti) in
             guard let emotion = noti.userInfo?["newImage"] as? UIImage else { return }
             self?.emotionImageView.image = emotion
         }
+        tokens.append(token)
         
-        NotificationCenter.default.addObserver(forName: .imageDidSelect, object: nil, queue: .main) { [weak self] (noti) in
+        
+        // 선택한 이미지를 표시합니다.
+        token = NotificationCenter.default.addObserver(forName: .imageDidSelect, object: nil, queue: .main) { [weak self] (noti) in
             guard let image = noti.userInfo?["image"] as? UIImage else { return }
             self?.imageList.append(image)
             self?.imageCollectionView.reloadData()
         }
+        tokens.append(token)
         
         
-        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { [weak self] (noti) in
+        token = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { [weak self] (noti) in
             guard let self = self else { return }
             guard let frame = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
             let height = frame.height
@@ -118,15 +140,17 @@ class DiaryComposeViewController: UIViewController {
             inset.bottom = height
             self.contentTextView.verticalScrollIndicatorInsets = inset
         }
+        tokens.append(token)
         
-        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { [weak self] _ in
+        
+        token = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { [weak self] _ in
             guard let self = self else { return }
             var inset = self.contentTextView.contentInset
             inset.bottom = 0
             self.contentTextView.contentInset = inset
             self.contentTextView.verticalScrollIndicatorInsets = inset
         }
-        
+        tokens.append(token)
     }
     
     
@@ -147,6 +171,7 @@ class DiaryComposeViewController: UIViewController {
         contentTextView.backgroundColor = backgroungView.backgroundColor
         contentTextView.alpha = 0.5
         
+        // tag값에 따라 서로 다른 배경화면을 표시합니다.
         switch composeTag {
         case 101:
             backgroungView.backgroundColor = UIColor.systemRed
@@ -165,11 +190,17 @@ class DiaryComposeViewController: UIViewController {
 
 extension DiaryComposeViewController: UITextViewDelegate {
     
+    /// 일기 편집 시 placeholder를 숨깁니다.
+    /// - Parameter textView: contentTextView
     func textViewDidBeginEditing(_ textView: UITextView) {
         placeholderLabel.isHidden = true
     }
     
     
+    /// 일기 편집 후 placeholder상태를 관리합니다.
+    ///
+    /// 편집 후 글자 수가 0인 경우 placeholder를 다시 표시합니다.
+    /// - Parameter textView: contentTextView
     func textViewDidEndEditing(_ textView: UITextView) {
         guard let content = textView.text, content.count > 0 else {
             placeholderLabel.isHidden = false
@@ -186,11 +217,21 @@ extension DiaryComposeViewController: UITextViewDelegate {
 
 extension DiaryComposeViewController: UICollectionViewDataSource {
     
+    /// 이미지 수를 리턴합니다.
+    /// - Parameters:
+    ///   - collectionView: imageCollectionView
+    ///   - section: 이미지 목록을 나누는 section indexPath
+    /// - Returns: 첨부할 이미지 개수
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return imageList.count
     }
     
     
+    /// 첨부할 이미지 목록 셀을 설정합니다.
+    /// - Parameters:
+    ///   - collectionView: imageCollectionView
+    ///   - indexPath: 이미지 셀의 indexPath
+    /// - Returns: 이미지 셀
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AttachedImageCollectionViewCell", for: indexPath) as! AttachedImageCollectionViewCell
         
@@ -205,6 +246,10 @@ extension DiaryComposeViewController: UICollectionViewDataSource {
  
 extension DiaryComposeViewController: UICollectionViewDelegate {
     
+    /// 이미지 셀을 선택했을 때의 동작을 설정합니다.
+    /// - Parameters:
+    ///   - collectionView: imageCollectionView
+    ///   - indexPath: 선택한 셀의 indexPath
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         imageList.remove(at: indexPath.item)
         imageCollectionView.deleteItems(at: [indexPath])
@@ -217,6 +262,12 @@ extension DiaryComposeViewController: UICollectionViewDelegate {
 
 extension DiaryComposeViewController: UICollectionViewDelegateFlowLayout {
     
+    /// 이미지 셀의 사이즈를 리턴합니다.
+    /// - Parameters:
+    ///   - collectionView: imageCollectionView
+    ///   - collectionViewLayout: imageCollectionView 레이아웃 정보
+    ///   - indexPath: 이미지 셀의 indexPath
+    /// - Returns: 이미지 셀의 사이즈
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         return CGSize(width: 100, height: 100)

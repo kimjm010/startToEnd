@@ -9,18 +9,13 @@ import UIKit
 import Photos
 
 
-extension NSNotification.Name {
-    
-}
-
-
-
+/// 앨범 이미지 표시 화면
 class ImageDisplayViewController: UIViewController {
     
+    /// 이미지 리스트 컬렉션 뷰
     @IBOutlet weak var listCollectionView: UICollectionView!
-    
-    @IBOutlet weak var editImageListButton: UIBarButtonItem!
 
+    /// Fetch한 사진 저장
     var allPhotos: PHFetchResult<PHAsset> = {
         let option = PHFetchOptions()
         
@@ -30,23 +25,20 @@ class ImageDisplayViewController: UIViewController {
         return PHAsset.fetchAssets(with: option)
     }()
     
+    /// 이미지 관리 객체
     let imageManager = PHImageManager()
     
     
-    @IBAction func editSelectedImageList(_ sender: Any) {
-        if #available(iOS 14, *) {
-            //PHPhotoLibrary.shared().presentLimitedLibraryPicker(from: self)
-        }
-    }
-    
-    
+    /// 앨범 이미지 표시 화면을 닫습니다.
+    /// - Parameter sender: Cancel 버튼
     @IBAction func closeVC(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
     
     
+    /// 선택한 이미지를 첨부합니다.
+    /// - Parameter sender: Select 버튼
     @IBAction func selectAttachedImages(_ sender: Any) {
-        print(#function)
         guard let indexPath = listCollectionView.indexPathsForSelectedItems else { return }
         
         for index in indexPath {
@@ -79,48 +71,32 @@ class ImageDisplayViewController: UIViewController {
         case .notDetermined:
             if #available(iOS 14, *) {
                 PHPhotoLibrary.requestAuthorization(for: .readWrite) { [weak self] (selectedStatus) in
-                    guard let self = self else { return }
                     switch selectedStatus {
                     case .authorized, .limited:
-                        DispatchQueue.main.async {
-                            self.editImageListButton.isEnabled = selectedStatus == .limited
-                        }
-                    default:
                         break
-                        // TODO: 경고창 표시해서 설정으로 이동하게할 것!
+                    default:
+                        self?.alertAccessPhotoLibrary()
                     }
                 }
             } else {
                 PHPhotoLibrary.requestAuthorization { [weak self] (selectedStatus) in
-                    guard let self = self else { return }
                     
                     switch selectedStatus {
                     case .authorized, .limited:
-                        DispatchQueue.main.async {
-                            self.editImageListButton.isEnabled = false
-                        }
-                        
-                    default:
                         break
-                        // TODO: 경고창 표시해서 설정으로 이동하게할 것!
+                    default:
+                        self?.alertAccessPhotoLibrary()
                     }
                 }
             }
         case .restricted:
-            break
-            // TODO: 경고창 표시해서 설정으로 이동하게할 것!
+            alertAccessPhotoLibrary()
         case .denied:
+            alertAccessPhotoLibrary()
+        case .authorized, .limited:
             break
-            // TODO: 경고창 표시해서 설정으로 이동하게할 것!
-        case .authorized:
-            DispatchQueue.main.async {
-                self.editImageListButton.isEnabled = false
-            }
-        case .limited:
-            self.editImageListButton.isEnabled = true
         @unknown default:
-            break
-            // TODO: 이부분 어떻게 처리할지 확인 할 것!
+            alertAccessPhotoLibrary()
         }
     }
     
@@ -135,6 +111,7 @@ class ImageDisplayViewController: UIViewController {
         PHPhotoLibrary.shared().register(self)
     }
     
+    /// 소멸자에서 옵저버를 제거
     deinit {
         PHPhotoLibrary.shared().unregisterChangeObserver(self)
     }
@@ -145,10 +122,22 @@ class ImageDisplayViewController: UIViewController {
 
 
 extension ImageDisplayViewController: UICollectionViewDataSource {
+    
+    /// 이미지 수를 리턴합니다.
+    /// - Parameters:
+    ///   - collectionView: listCollectionView
+    ///   - section: 이미지 목록을 나누는 section Index
+    /// - Returns: 접근 가능한 이미지 개수
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return allPhotos.count
     }
     
+    
+    /// 이미지 표시를 위한 셀을 구성합니다.
+    /// - Parameters:
+    ///   - collectionView: listCollectionView
+    ///   - indexPath: 이미지 셀의 indexPath
+    /// - Returns: 이미지 셀
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DisplayImagesCollectionViewCell", for: indexPath) as! DisplayImagesCollectionViewCell
@@ -167,6 +156,13 @@ extension ImageDisplayViewController: UICollectionViewDataSource {
 
 
 extension ImageDisplayViewController: UICollectionViewDelegateFlowLayout {
+    
+    /// 이미지 셀의 사이즈를 리턴합니다.
+    /// - Parameters:
+    ///   - collectionView: listCollectionView
+    ///   - collectionViewLayout: listCollectionView 레이아웃 정보
+    ///   - indexPath: 이미지 셀의 indexPath
+    /// - Returns: 이미지 셀의 사이즈
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         return CGSize(width: collectionView.frame.width / 4,
@@ -179,6 +175,9 @@ extension ImageDisplayViewController: UICollectionViewDelegateFlowLayout {
 
 
 extension ImageDisplayViewController: PHPhotoLibraryChangeObserver {
+    
+    /// photoLibrary애 변화가 있을 경우 호출됩니다.
+    /// - Parameter changeInstance: 변경 사항을 나타내는 객체
     func photoLibraryDidChange(_ changeInstance: PHChange) {
         DispatchQueue.main.async {
             if let changes = changeInstance.changeDetails(for: self.allPhotos) {
