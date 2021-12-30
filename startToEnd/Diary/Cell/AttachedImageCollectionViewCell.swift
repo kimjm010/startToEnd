@@ -14,11 +14,12 @@ class AttachedImageCollectionViewCell: UICollectionViewCell {
     /// 첨부한 이미지 뷰
     @IBOutlet weak var attachedImage: UIImageView!
     
+    func configure(imageData: PhotoGalleryEntity) {
+        guard let data = imageData.imageData else { return }
+        attachedImage.image = UIImage(data: data)
+    }
     
-    /// 셀을 초기화합니다
-    /// - Parameter image: UIImage 객체
     func configure(image: UIImage) {
         attachedImage.image = image
     }
-    
 }

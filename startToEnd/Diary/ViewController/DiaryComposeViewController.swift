@@ -23,9 +23,6 @@ class DiaryComposeViewController: UIViewController {
     
     /// 감정상태를 표시하는 이미지 뷰
     @IBOutlet weak var emotionImageView: UIImageView!
-
-    /// 위치 레이블
-    @IBOutlet weak var memorialLocationLabel: UILabel!
     
     /// 일기 내용 텍스트 뷰
     @IBOutlet weak var contentTextView: UITextView!
@@ -54,12 +51,6 @@ class DiaryComposeViewController: UIViewController {
     
     /// 일기 정보 저장 속성
     var diary: MyDiaryEntity?
-    
-    /// 일기에 첨부할 이미지 배열
-    var imageList = [UIImage]()
-    
-    /// 이미지 저장 속성
-    var photos = [PhotoGalleryEntity]()
 
     /// 일기 목록을 확인하는 속성
     ///
@@ -68,6 +59,12 @@ class DiaryComposeViewController: UIViewController {
     
     /// 옵저버 제거를 위해 토큰을 담는 배열
     var tokens = [NSObjectProtocol]()
+    
+    /// 첨부한 이미지 배열
+    var imageList = [UIImage]()
+    
+    /// 첨부한 이미지 데이터 배열
+    var attachedImageDataList = [Data]()
     
     
     /// 일기 작성 화면을 닫습니다.
@@ -81,13 +78,12 @@ class DiaryComposeViewController: UIViewController {
     /// - Parameter sender: Save 버튼
     @IBAction func saveDiary(_ sender: Any) {
         
-        let image = UIImage(data: photos.first?.image ?? Data())
         guard let content = contentTextView.text, let status = emotionImageView.image else { return }
         
         DataManager.shared.createDiary(content: content,
                                        insertDate: datePicker.date,
                                        statusImage: status.pngData(),
-                                       image: image?.pngData()) {
+                                       image: imageList.first?.pngData()) {
             NotificationCenter.default.post(name: .didInsertNewDiary, object: nil)
             self.dismiss(animated: true, completion: nil)
         }
@@ -108,7 +104,8 @@ class DiaryComposeViewController: UIViewController {
         super.viewDidLoad()
         
         initializeData()
-        photos = DataManager.shared.retrieveImagesData()
+        DataManager.shared.fetchImageData()
+        DataManager.shared.fetchDiary()
         imageCollectionView.reloadData()
         
         // 선택한 감정상태를 배경화면으로 지정합니다.
@@ -120,11 +117,17 @@ class DiaryComposeViewController: UIViewController {
         
         
         // 선택한 이미지를 표시합니다.
-        token = NotificationCenter.default.addObserver(forName: .imageDidSelect, object: nil, queue: .main) { [weak self] (noti) in
-            guard let image = noti.userInfo?["image"] as? UIImage else { return }
-            self?.imageList.append(image)
+        token = NotificationCenter.default.addObserver(forName: .imageDidSelect, object: nil, queue: .main, using: { [weak self] (noti) in
+            guard let imageData = noti.userInfo?["imageData"] as? [Data] else { return }
+            self?.attachedImageDataList = imageData
+            
+            for num in 0...(imageData.count - 1) {
+                guard let image = UIImage(data: imageData[num]) else { return }
+                self?.imageList.append(image)
+            }
+            DataManager.shared.fetchDiary()
             self?.imageCollectionView.reloadData()
-        }
+        })
         tokens.append(token)
         
         
@@ -223,6 +226,7 @@ extension DiaryComposeViewController: UICollectionViewDataSource {
     ///   - section: 이미지 목록을 나누는 section indexPath
     /// - Returns: 첨부할 이미지 개수
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        //return DataManager.shared.photoList.count
         return imageList.count
     }
     
@@ -235,7 +239,8 @@ extension DiaryComposeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AttachedImageCollectionViewCell", for: indexPath) as! AttachedImageCollectionViewCell
         
-        let target = imageList[indexPath.item]
+        //let target = DataManager.shared.photoList[indexPath.item]
+        let target = imageList[indexPath.row]
         cell.configure(image: target)
         return cell
     }
@@ -253,7 +258,6 @@ extension DiaryComposeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         imageList.remove(at: indexPath.item)
         imageCollectionView.deleteItems(at: [indexPath])
-        imageCollectionView.reloadData()
     }
 }
 

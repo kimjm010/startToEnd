@@ -225,6 +225,12 @@
                                 <segue destination="ZYm-dB-VTk" kind="show" id="2iK-K9-KTf"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem title="완료" id="Sgk-57-38S">
+                            <color key="tintColor" systemColor="labelColor"/>
+                            <connections>
+                                <action selector="dismissKeyboardNotification:" destination="BYZ-38-t0r" id="C85-jL-fMO"/>
+                            </connections>
+                        </barButtonItem>
                     </items>
                 </toolbar>
             </objects>

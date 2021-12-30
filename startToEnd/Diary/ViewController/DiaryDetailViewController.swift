@@ -41,8 +41,6 @@ class DiaryDetailViewController: UIViewController {
     
     /// PhotoGalleryEntity 객체
     var photos = [PhotoGalleryEntity]()
-    
-    var target: NSManagedObject?
 
 
     /// 뷰가 화면에 표시되기 직전에 호출됩니다.
@@ -124,7 +122,8 @@ class DiaryDetailViewController: UIViewController {
     /// 필요한 데이터를 초기화합니다.
     func initializeData() {
         guard let diary = diary,
-                let defaultImageData = UIImage(named: "1")?.pngData() else { return }
+              let defaultImageData = UIImage(named: "1")?.pngData(),
+              let image = UIImage(data: diary.image ?? Data()) else { return }
         
         dateLabelContainerView.applyBigRoundedRect()
         emotionBackgroungImageView.image = UIImage(data: diary.statusImage ?? defaultImageData)
@@ -132,6 +131,7 @@ class DiaryDetailViewController: UIViewController {
         contentTextView.text = diary.content
         changeEmotionImageButton.setTitle("", for: .normal)
         listCollectionView.isHidden = imageList.count == 0
+        imageList.append(image)
     }
 }
 

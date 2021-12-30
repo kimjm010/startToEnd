@@ -125,6 +125,11 @@ class ViewController: UIViewController {
     }
     
     
+    @IBAction func dismissKeyboardNotification(_ sender: Any) {
+        willHideKeyboard()
+    }
+    
+    
     /// todo를 저장합니다.
     /// - Parameter sender: 입력 버튼
     @IBAction func saveTodo(_ sender: Any) {
@@ -155,11 +160,13 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        DataManager.shared.fetchTodo()
+        toDoListTableView.reloadData()
+        
         initializeData()
         setupSearchController()
         
-        DataManager.shared.fetchTodo()
-        toDoListTableView.reloadData()
+        willHideKeyboard()
         
         var token = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification,
                                                            object: nil,
@@ -180,18 +187,6 @@ class ViewController: UIViewController {
                 guard let tabBarHeight = self.tabBarController?.tabBar.frame.height else { return }
                 self.composeContainerViewBottomConstraint.constant = height - tabBarHeight
             }
-        }
-        tokens.append(token)
-        
-        
-        token = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification,
-                                                       object: nil,
-                                                       queue: .main) { [weak self] (noti) in
-            guard let self = self else { return }
-            
-            self.toDoListTableView.contentInset.bottom = 0
-            self.toDoListTableView.verticalScrollIndicatorInsets.bottom = 0
-            self.composeContainerViewBottomConstraint.constant = 8
         }
         tokens.append(token)
         
@@ -268,6 +263,21 @@ class ViewController: UIViewController {
         searchController.searchBar.placeholder = "지난 계획을 검색하세요 :)"
         navigationItem.searchController = searchController
         definesPresentationContext = true
+    }
+    
+    
+    /// keyboardWillHide 노티피케이션을 실행합니다.
+    func willHideKeyboard() {
+        let token = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification,
+                                                       object: nil,
+                                                       queue: .main) { [weak self] (noti) in
+            guard let self = self else { return }
+            
+            self.toDoListTableView.contentInset.bottom = 0
+            self.toDoListTableView.verticalScrollIndicatorInsets.bottom = 0
+            self.composeContainerViewBottomConstraint.constant = 8
+        }
+        tokens.append(token)
     }
     
     

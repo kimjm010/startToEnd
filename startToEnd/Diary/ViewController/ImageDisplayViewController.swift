@@ -28,6 +28,7 @@ class ImageDisplayViewController: UIViewController {
     /// 이미지 관리 객체
     let imageManager = PHImageManager()
     
+    var imageDataList = [Data]()
     
     /// 앨범 이미지 표시 화면을 닫습니다.
     /// - Parameter sender: Cancel 버튼
@@ -43,16 +44,24 @@ class ImageDisplayViewController: UIViewController {
         
         for index in indexPath {
             let target = allPhotos.object(at: index.item)
-            let size = CGSize(width: listCollectionView.frame.width / 2, height: listCollectionView.frame.width / 2)
+            let size = CGSize(width: listCollectionView.frame.width / 2,
+                              height: listCollectionView.frame.width / 2)
             
             
-            imageManager.requestImage(for: target, targetSize: size, contentMode: .aspectFit, options: nil) { [weak self] (image, _) in
-                guard let image = image else { return }
-                let userInfo = ["image": image]
+            imageManager.requestImage(for: target,
+                                         targetSize: size,
+                                         contentMode: .aspectFit,
+                                         options: nil) { [weak self] (image, _) in
+                guard let self = self else { return }
+                guard let image = image, let imageData = image.pngData() else { return }
+                
+                self.imageDataList.append(imageData)
+                let userInfo = ["imageData": self.imageDataList]
                 NotificationCenter.default.post(name: .imageDidSelect, object: nil, userInfo: userInfo)
-                self?.dismiss(animated: true, completion: nil)
             }
         }
+        
+        dismiss(animated: true, completion: nil)
     }
     
     

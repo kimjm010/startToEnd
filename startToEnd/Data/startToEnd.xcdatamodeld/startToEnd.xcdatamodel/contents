@@ -7,7 +7,7 @@
         <attribute name="statusImage" optional="YES" attributeType="Binary"/>
     </entity>
     <entity name="PhotoGallery" representedClassName="PhotoGalleryEntity" syncable="YES" codeGenerationType="class">
-        <attribute name="image" optional="YES" attributeType="Binary"/>
+        <attribute name="imageData" attributeType="Binary"/>
     </entity>
     <entity name="Todo" representedClassName="TodoEntity" syncable="YES" codeGenerationType="class">
         <attribute name="category" attributeType="String"/>

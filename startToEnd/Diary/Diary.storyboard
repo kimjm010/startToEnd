@@ -245,7 +245,7 @@
                                                     <constraint firstAttribute="height" constant="1" id="ZSO-cY-t0a"/>
                                                 </constraints>
                                             </view>
-                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="여기에 일기 내용이 표시됩니다." textAlignment="natural" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dAV-fW-b0u">
+                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dAV-fW-b0u">
                                                 <rect key="frame" x="0.0" y="121" width="414" height="532"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="textColor" systemColor="labelColor"/>
@@ -379,7 +379,7 @@
                                                     <datePicker contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="center" datePickerMode="date" style="compact" translatesAutoresizingMaskIntoConstraints="NO" id="wLm-3n-rNq">
                                                         <rect key="frame" x="0.0" y="0.0" width="109.5" height="50"/>
                                                     </datePicker>
-                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="18" translatesAutoresizingMaskIntoConstraints="NO" id="Rsu-ra-h47">
+                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="34" translatesAutoresizingMaskIntoConstraints="NO" id="Rsu-ra-h47">
                                                         <rect key="frame" x="14.5" y="50" width="80" height="50"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="80" id="5Vh-y0-Fkx"/>
@@ -445,21 +445,8 @@
                                             <outlet property="delegate" destination="zgN-KC-mOh" id="eLI-yd-Y5w"/>
                                         </connections>
                                     </collectionView>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zss-Jv-rq3">
-                                        <rect key="frame" x="0.0" y="225" width="374" height="1"/>
-                                        <color key="backgroundColor" systemColor="systemGray6Color"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="1" id="kJ5-RP-Nfa"/>
-                                        </constraints>
-                                    </view>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="기억에 남는 장소를 추가해주세요 :)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uOR-BS-rn1">
-                                        <rect key="frame" x="0.0" y="234" width="374" height="17"/>
-                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bwr-cP-KgK">
-                                        <rect key="frame" x="0.0" y="259" width="374" height="1"/>
+                                        <rect key="frame" x="0.0" y="225" width="374" height="1"/>
                                         <viewLayoutGuide key="safeArea" id="mwu-Xz-TgV"/>
                                         <color key="backgroundColor" systemColor="systemGray6Color"/>
                                         <constraints>
@@ -467,7 +454,7 @@
                                         </constraints>
                                     </view>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XX5-9C-0h1">
-                                        <rect key="frame" x="0.0" y="268" width="374" height="540"/>
+                                        <rect key="frame" x="0.0" y="234" width="374" height="574"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <color key="textColor" systemColor="labelColor"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
@@ -490,7 +477,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="오늘의 일기를 작성해주세요 :) 1. 오늘 하루의 감정은 어땠는지 이모티콘으로 클릭해서 선택해 주세요 :) 2. 오늘을 기억할 수 있는 사진을 첨부해 주세요:) 3. 오늘 가장 기억에 남는 장소는 어디인지 알려주세요:)" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pfD-KV-Bv3">
-                                <rect key="frame" x="28" y="364" width="374" height="100"/>
+                                <rect key="frame" x="28" y="330" width="374" height="100"/>
                                 <color key="tintColor" systemColor="labelColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="lHj-RL-wS1"/>
@@ -542,10 +529,9 @@
                         <outlet property="datePicker" destination="wLm-3n-rNq" id="Gal-vg-VI4"/>
                         <outlet property="emotionImageView" destination="Rsu-ra-h47" id="hAV-qC-2mW"/>
                         <outlet property="imageCollectionView" destination="7ap-Kt-Cgr" id="kvf-f2-K7U"/>
-                        <outlet property="memorialLocationLabel" destination="uOR-BS-rn1" id="8qw-p8-bG2"/>
                         <outlet property="placeholderLabel" destination="pfD-KV-Bv3" id="e6w-pY-ZbK"/>
                         <outlet property="selectEmotionImageButton" destination="VMy-gm-ytI" id="ao7-Rk-vL0"/>
-                        <outlet property="separationView" destination="Zss-Jv-rq3" id="x6j-Pn-yku"/>
+                        <outlet property="separationView" destination="bwr-cP-KgK" id="oZQ-S9-CtI"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WXc-E6-bDd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -803,12 +789,12 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="d9e-Lo-aia"/>
+        <segue reference="Hbf-ny-x8O"/>
         <segue reference="tKu-1N-Byf"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="14" width="256" height="256"/>
-        <image name="18" width="256" height="256"/>
+        <image name="34" width="256" height="256"/>
         <image name="addButton" width="64" height="64"/>
         <image name="changeEmotion" width="64" height="64"/>
         <image name="checkmark.circle.fill" catalog="system" width="128" height="121"/>

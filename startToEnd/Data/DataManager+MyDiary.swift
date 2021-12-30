@@ -13,7 +13,7 @@ extension DataManager {
     
     // CreateMyDiary
     func createDiary(content: String? = nil,
-                     insertDate: Date = Date(),
+                     insertDate: Date? = Date(),
                      statusImage: Data? = nil,
                      image: Data? = nil,
                      completion: (() -> ())? = nil) {
@@ -48,8 +48,8 @@ extension DataManager {
     
     // UpdateDiary
     func updateDiary(entity: MyDiaryEntity,
-                     content: String,
-                     insertDate: Date,
+                     content: String?,
+                     insertDate: Date?,
                      statusImage: Data? = nil,
                      image: Data? = nil,
                      completion: (() -> ())? = nil) {
@@ -73,14 +73,13 @@ extension DataManager {
         }
     }
     
-    // saveImage
-    func saveImages(imageData: Data,
-                    completion: (() -> ())? = nil) {
-        let image: UIImage? = nil
-        
+    
+    /// 이미지를 저장합니다.
+    func saveImageData(imageData: Data,
+                       completion: (() -> ())? = nil) {
         mainContext.perform {
-            let photoObject = NSEntityDescription.insertNewObject(forEntityName: "PhotoGallery", into: self.mainContext) as! PhotoGalleryEntity
-            photoObject.image = image?.jpegData(compressionQuality: 1) as Data?
+            let newData = PhotoGalleryEntity(context: self.mainContext)
+            newData.imageData = imageData
             
             self.saveMainContext()
             completion?()
@@ -88,19 +87,38 @@ extension DataManager {
     }
     
     
-    func retrieveImagesData() -> [PhotoGalleryEntity] {
-        var photos = [PhotoGalleryEntity]()
-        
+    /// 이미지를 Fetch합니다.
+    func fetchImageData() {
         mainContext.performAndWait {
             let request: NSFetchRequest<PhotoGalleryEntity> = PhotoGalleryEntity.fetchRequest()
             
             do {
-                photos = try mainContext.fetch(request)
+                photoList = try mainContext.fetch(request)
             } catch {
                 print(error.localizedDescription)
             }
         }
-        
-        return photos
+    }
+    
+    
+    /// 이미지를 업데이트 합니다.
+    func updateImageData(entity: PhotoGalleryEntity,
+                         imageData: Data,
+                         completion: (() -> ())? = nil) {
+        mainContext.perform {
+            entity.imageData = imageData
+            
+            self.saveMainContext()
+            completion?()
+        }
+    }
+    
+    
+    /// 이미지를 삭제합니다.
+    func deleteImageData(entity: PhotoGalleryEntity) {
+        mainContext.perform {
+            self.mainContext.delete(entity)
+            self.saveMainContext()
+        }
     }
 }
