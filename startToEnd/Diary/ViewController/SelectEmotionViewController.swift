@@ -9,7 +9,7 @@ import UIKit
 
 
 /// 감정 이미지 선택 화면
-class SelectEmotionViewController: UIViewController {
+class SelectEmotionViewController: CommonViewController {
 
     /// 감정 이미지를 표시합니다.
     ///

@@ -10,7 +10,7 @@ import Photos
 
 
 /// 앨범 이미지 표시 화면
-class ImageDisplayViewController: UIViewController {
+class ImageDisplayViewController: CommonViewController {
     
     /// 이미지 리스트 컬렉션 뷰
     @IBOutlet weak var listCollectionView: UICollectionView!

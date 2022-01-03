@@ -6,12 +6,11 @@
 //
 
 import UIKit
-import DropDown
 import CoreData
 
 
 /// todo 목록 화면
-class ViewController: UIViewController {
+class ViewController: CommonViewController {
     
     /// todo 작성 컨테이너 뷰 bottom 제약
     @IBOutlet weak var composeContainerViewBottomConstraint: NSLayoutConstraint!
@@ -82,9 +81,6 @@ class ViewController: UIViewController {
     /// 선택된 Todo
     var selectedTodo: TodoEntity?
     
-    /// 옵저버 제거를 위해 토큰을 담는 배열
-    var tokens = [NSObjectProtocol]()
-    
     
     /// 곧 실행될 뷰 컨트롤러를 준비합니다.
     ///
@@ -126,7 +122,9 @@ class ViewController: UIViewController {
     
     
     @IBAction func dismissKeyboardNotification(_ sender: Any) {
-        willHideKeyboard()
+        if toDoTextField.isFirstResponder {
+            toDoTextField.resignFirstResponder()
+        }
     }
     
     
@@ -166,7 +164,6 @@ class ViewController: UIViewController {
         initializeData()
         setupSearchController()
         
-        willHideKeyboard()
         
         var token = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification,
                                                            object: nil,
@@ -187,6 +184,18 @@ class ViewController: UIViewController {
                 guard let tabBarHeight = self.tabBarController?.tabBar.frame.height else { return }
                 self.composeContainerViewBottomConstraint.constant = height - tabBarHeight
             }
+        }
+        tokens.append(token)
+        
+        
+        token = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification,
+                                                       object: nil,
+                                                       queue: .main) { [weak self] (noti) in
+            guard let self = self else { return }
+            
+            self.toDoListTableView.contentInset.bottom = 0
+            self.toDoListTableView.verticalScrollIndicatorInsets.bottom = 0
+            self.composeContainerViewBottomConstraint.constant = 8
         }
         tokens.append(token)
         
@@ -238,13 +247,6 @@ class ViewController: UIViewController {
         tokens.append(token)
     }
     
-    /// 소멸자에서 옵저버를 제거
-    deinit {
-        for token in tokens {
-            NotificationCenter.default.removeObserver(token)
-        }
-    }
-    
     
     /// 데이터를 초기화합니다.
     func initializeData() {
@@ -263,21 +265,6 @@ class ViewController: UIViewController {
         searchController.searchBar.placeholder = "지난 계획을 검색하세요 :)"
         navigationItem.searchController = searchController
         definesPresentationContext = true
-    }
-    
-    
-    /// keyboardWillHide 노티피케이션을 실행합니다.
-    func willHideKeyboard() {
-        let token = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification,
-                                                       object: nil,
-                                                       queue: .main) { [weak self] (noti) in
-            guard let self = self else { return }
-            
-            self.toDoListTableView.contentInset.bottom = 0
-            self.toDoListTableView.verticalScrollIndicatorInsets.bottom = 0
-            self.composeContainerViewBottomConstraint.constant = 8
-        }
-        tokens.append(token)
     }
     
     

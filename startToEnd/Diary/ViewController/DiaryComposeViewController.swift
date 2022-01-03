@@ -11,7 +11,7 @@ import CoreData
 
 
 /// 일기 작성 화면
-class DiaryComposeViewController: UIViewController {
+class DiaryComposeViewController: CommonViewController {
     
     /// 이미지 컬렉션 뷰
     ///
@@ -56,9 +56,6 @@ class DiaryComposeViewController: UIViewController {
     ///
     /// tag값에 따라 다른 배경의 일기작성 화면을 표시합니다.
     var composeTag: Int?
-    
-    /// 옵저버 제거를 위해 토큰을 담는 배열
-    var tokens = [NSObjectProtocol]()
     
     /// 첨부한 이미지 배열
     var imageList = [UIImage]()
@@ -152,9 +149,13 @@ class DiaryComposeViewController: UIViewController {
             inset.bottom = 0
             self.contentTextView.contentInset = inset
             self.contentTextView.verticalScrollIndicatorInsets = inset
+            
+            
         }
         tokens.append(token)
     }
+    
+    
     
     
     /// 화면을 닫기전에 실행됩니다.

@@ -9,14 +9,10 @@ import UIKit
 
 
 /// Category선택 화면
-class SelectCategoryViewController: UIViewController {
+class SelectCategoryViewController: CommonViewController {
 
     /// Category 표시 테이블 뷰
     @IBOutlet weak var listTableView: UITableView!
-    
-    /// 옵저버 제거를 위해 토큰을 담는 배열
-    var tokens = [NSObjectProtocol]()
-
     
     
     /// Category선택 화면을 닫습니다.
@@ -40,13 +36,6 @@ class SelectCategoryViewController: UIViewController {
         }
         tokens.append(token)
         
-    }
-    
-    /// 소멸자에서 옵저버를 제거합니다.
-    deinit {
-        for token in tokens {
-            NotificationCenter.default.removeObserver(token)
-        }
     }
 }
 

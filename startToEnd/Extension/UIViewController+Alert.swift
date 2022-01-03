@@ -31,7 +31,9 @@ extension  UIViewController {
     ///   - title: 알림의 title
     ///   - message: 알림의 message
     ///   - handler: goToSettingAction 클릭 이후의 동작
-    func alertAccessPhotoLibrary(title: String? = "\"StartToEnd\" Woul Like to Access Your Photos", message: String? = "This app requires access to photo library", handler: ((UIAlertAction) -> Void)? = nil) {
+    func alertAccessPhotoLibrary(title: String? = "\"StartToEnd\" Woul Like to Access Your Photos",
+                                 message: String? = "This app requires access to photo library",
+                                 handler: ((UIAlertAction) -> Void)? = nil) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         let laterAction = UIAlertAction(title: "Don't Allow", style: .cancel, handler: nil)

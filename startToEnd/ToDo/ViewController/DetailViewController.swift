@@ -8,11 +8,10 @@
 import UIKit
 import UserNotifications
 import CoreData
-import DropDown
 
 
 /// todo Detail 화면
-class DetailViewController: UIViewController {
+class DetailViewController: CommonViewController {
     
     /// 반복 설정 컨테이너 뷰
     @IBOutlet weak var repeatNotificationContainerView: UIStackView!
@@ -49,9 +48,6 @@ class DetailViewController: UIViewController {
     
     /// 선택된 toDoList의 카테고리 속성
     var selectedCategoryRawvalue: Int?
-    
-    /// 옵저버 제거를 위해 토큰을 담는 배열
-    var tokens = [NSObjectProtocol]()
     
     /// 선택된 todo
     var selectedTodo: TodoEntity?
@@ -105,7 +101,6 @@ class DetailViewController: UIViewController {
         if let selectedTodo = selectedTodo {
             DataManager.shared.updateTodo(entity: selectedTodo,
                                           content: content,
-                                          insertDate: selectedTodo.insertDate,
                                           notiDate: selectedTodo.notiDate,
                                           isMarked: selectedTodo.isMarked,
                                           reminder: selectedTodo.reminder,
@@ -199,13 +194,8 @@ class DetailViewController: UIViewController {
         
     }
     
-    /// 소멸자에서 옵저버를 제거
+    /// 소멸자에서 등록된 localNotification을 제거합니다.
     deinit {
-        for token in tokens {
-            NotificationCenter.default.removeObserver(token)
-        }
-        
-        // 등록된 localNotification을 제거합니다.
         NotificationManager.shared.removeScheduledNotification(todo: selectedTodo)
     }
 }

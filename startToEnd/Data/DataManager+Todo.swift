@@ -108,7 +108,6 @@ extension DataManager {
     /// - Parameters:
     ///   - entity: TodoEntity
     ///   - content: 업데이트 내용
-    ///   - insertDate: 업데이트 날짜
     ///   - notiDate: 업데이트할 알림 날짜
     ///   - isMarked: 하이라이트 업데이트 여부
     ///   - reminder: 알림 업데이트 여부
@@ -116,17 +115,15 @@ extension DataManager {
     ///   - memo: 메모 업데이트 여부
     ///   - completion: 업데이트 후 실행할 작업
     func updateTodo(entity: TodoEntity,
-                    content: String? = nil,
-                    insertDate: Date? = Date(),
-                    notiDate: Date? = nil,
-                    isMarked: Bool? = false,
-                    reminder: Bool? = false,
-                    isRepeat: Bool? = false,
-                    memo: String? = nil,
+                    content: String?,
+                    notiDate: Date?,
+                    isMarked: Bool?,
+                    reminder: Bool?,
+                    isRepeat: Bool?,
+                    memo: String?,
                     completion: (() -> ())? = nil) {
         mainContext.perform {
             entity.content = content
-            entity.insertDate = insertDate
             entity.notiDate = notiDate
             
             guard let isMarked = isMarked,

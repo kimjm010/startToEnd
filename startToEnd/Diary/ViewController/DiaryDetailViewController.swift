@@ -10,7 +10,7 @@ import CoreData
 
 
 /// 일기 Detail 화면
-class DiaryDetailViewController: UIViewController {
+class DiaryDetailViewController: CommonViewController {
     
     /// 배경 이미지 뷰
     @IBOutlet weak var emotionBackgroungImageView: UIImageView!
@@ -59,12 +59,14 @@ class DiaryDetailViewController: UIViewController {
         
         initializeData()
         
-        NotificationCenter.default.addObserver(forName: .didUpdateEmotionImage, object: nil, queue: .main) { [weak self] (noti) in
+        var token = NotificationCenter.default.addObserver(forName: .didUpdateEmotionImage, object: nil, queue: .main) { [weak self] (noti) in
             guard let newEmotion = noti.userInfo?["newImage"] as? UIImage else { return }
             
             self?.diary?.statusImage = newEmotion.pngData()
             self?.emotionBackgroungImageView.image = newEmotion
         }
+        tokens.append(token)
+        
         
         // 다이어리를 업데이트 합니다.
         if let diary = diary,
@@ -72,7 +74,6 @@ class DiaryDetailViewController: UIViewController {
             let data = diary.statusImage {
             DataManager.shared.updateDiary(entity: diary,
                                            content: content,
-                                           insertDate: diary.insertDate ?? Date(),
                                            statusImage: UIImage(data: data)?.pngData(),
                                            image: nil) {
                 NotificationCenter.default.post(name: .didUpdateDiary, object: nil)
@@ -81,7 +82,7 @@ class DiaryDetailViewController: UIViewController {
         }
         
         
-        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification,
+        token = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification,
                                                object: nil,
                                                queue: .main) { [weak self] (noti) in
             guard let self = self else { return }
@@ -97,9 +98,10 @@ class DiaryDetailViewController: UIViewController {
                 self.contentTextView.verticalScrollIndicatorInsets = inset
             }
         }
+        tokens.append(token)
         
         
-        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification,
+        token = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification,
                                                object: nil,
                                                queue: .main) { [weak self] (noti) in
             guard let self = self else { return }
@@ -108,7 +110,7 @@ class DiaryDetailViewController: UIViewController {
             self.contentTextView.contentInset = inset
             self.contentTextView.verticalScrollIndicatorInsets = inset
         }
-        
+        tokens.append(token)
     }
     
     

@@ -9,7 +9,7 @@ import UIKit
 
 
 /// 일기장 목록 화면
-class DiaryListViewController: UIViewController {
+class DiaryListViewController: CommonViewController {
     
     /// 일기장 목록 컨테이너 뷰
     @IBOutlet weak var composeListContainerView: UIStackView!
@@ -41,9 +41,6 @@ class DiaryListViewController: UIViewController {
     ///
     /// isShow 여부에 따라 dimmingView를 표시 여부가 달라집니다.
     var isShow: Bool = false
-    
-    /// 옵저버 제거를 위해 토큰을 담는 배열
-    var tokens = [NSObjectProtocol]()
     
     
     /// 곧 실행될 뷰 컨트롤러를 준비합니다.
@@ -136,23 +133,8 @@ class DiaryListViewController: UIViewController {
     }
     
     
-    /// 소멸자에서 옵저버를 제거
-    deinit {
-        for token in tokens {
-            NotificationCenter.default.removeObserver(token)
-        }
-    }
-    
-    
     /// 필요한 데이터를 초기화합니다.
     func initializeData() {
-        
-        sortedList = DataManager.shared.myDiaryList.sorted {
-            guard let firstDate = $0.insertDate, let secondDate = $1.insertDate else { return false }
-            
-            return firstDate > secondDate
-        }
-        
         composeListContainerView.isHidden = true
         showComposeMenuButton.setTitle("", for: .normal)
     }

@@ -23,8 +23,8 @@
 		F5388E832751FBF6005426D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F5388E822751FBF6005426D1 /* Assets.xcassets */; };
 		F5388E862751FBF6005426D1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F5388E842751FBF6005426D1 /* LaunchScreen.storyboard */; };
 		F5446D85275F41EB00B1CC05 /* NSNotification+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5446D84275F41EB00B1CC05 /* NSNotification+Extension.swift */; };
+		F557ABFC277F68E6000D22B8 /* CommonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F557ABFB277F68E6000D22B8 /* CommonViewController.swift */; };
 		F5A4B33D27584E6800DC415B /* Date+Formatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A4B33C27584E6800DC415B /* Date+Formatter.swift */; };
-		F5A4B33F2758914600DC415B /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A4B33E2758914600DC415B /* Common.swift */; };
 		F5A4B341275A06BA00DC415B /* SelectCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A4B340275A06BA00DC415B /* SelectCategoryViewController.swift */; };
 		F5A4B343275A06E100DC415B /* SelectCategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A4B342275A06E100DC415B /* SelectCategoryTableViewCell.swift */; };
 		F5B38E86276C828E00A8D596 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B38E85276C828E00A8D596 /* NotificationManager.swift */; };
@@ -64,8 +64,8 @@
 		F5388E852751FBF6005426D1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F5388E872751FBF6005426D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F5446D84275F41EB00B1CC05 /* NSNotification+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSNotification+Extension.swift"; sourceTree = "<group>"; };
+		F557ABFB277F68E6000D22B8 /* CommonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonViewController.swift; sourceTree = "<group>"; };
 		F5A4B33C27584E6800DC415B /* Date+Formatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Formatter.swift"; sourceTree = "<group>"; };
-		F5A4B33E2758914600DC415B /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		F5A4B340275A06BA00DC415B /* SelectCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCategoryViewController.swift; sourceTree = "<group>"; };
 		F5A4B342275A06E100DC415B /* SelectCategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCategoryTableViewCell.swift; sourceTree = "<group>"; };
 		F5B38E85276C828E00A8D596 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
@@ -236,7 +236,7 @@
 		F5E189C82756B49C00DCC300 /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				F5A4B33E2758914600DC415B /* Common.swift */,
+				F557ABFB277F68E6000D22B8 /* CommonViewController.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -379,9 +379,9 @@
 				F5C42B4F27605FC700B9E197 /* DiaryListTableViewCell.swift in Sources */,
 				F5CC22A32761E64B00F5E938 /* DisplayImagesCollectionViewCell.swift in Sources */,
 				F534B3C827618E2000F3E24D /* ImageDisplayViewController.swift in Sources */,
+				F557ABFC277F68E6000D22B8 /* CommonViewController.swift in Sources */,
 				F5C90811275EECA600ED49DD /* UIView+Extension.swift in Sources */,
 				F5C42B4C27605F9A00B9E197 /* DiaryListViewController.swift in Sources */,
-				F5A4B33F2758914600DC415B /* Common.swift in Sources */,
 				F5B38E86276C828E00A8D596 /* NotificationManager.swift in Sources */,
 				F5C9080F275D951400ED49DD /* CreateNewCategoryViewController.swift in Sources */,
 				F5064BE227647EBF006BE2E4 /* DataManager.swift in Sources */,

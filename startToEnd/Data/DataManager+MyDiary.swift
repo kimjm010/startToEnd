@@ -49,13 +49,11 @@ extension DataManager {
     // UpdateDiary
     func updateDiary(entity: MyDiaryEntity,
                      content: String?,
-                     insertDate: Date?,
-                     statusImage: Data? = nil,
-                     image: Data? = nil,
+                     statusImage: Data?,
+                     image: Data?,
                      completion: (() -> ())? = nil) {
         mainContext.perform {
             entity.content = content
-            entity.insertDate = insertDate
             entity.statusImage = statusImage
             entity.image = image
             
