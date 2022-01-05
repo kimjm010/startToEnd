@@ -6,21 +6,17 @@
 //
 
 import UIKit
+import CoreData
 
 
 /// 일기 목록을 표시하는 테이블 뷰 셀
 class DiaryListTableViewCell: UITableViewCell {
-
+    
     /// 일기 내용
     @IBOutlet weak var contentLabel: UILabel!
     
     /// 일기 작성 일자
     @IBOutlet weak var dateLabel: UILabel!
-    
-    /// 그날의 감정
-    ///
-    /// 일기 작성 시의 감정을 이미지로 표헌합니다.
-    @IBOutlet weak var statusImageView: UIImageView!
     
     
     /// 셀을 초기화합니다.
@@ -28,6 +24,5 @@ class DiaryListTableViewCell: UITableViewCell {
     func configure(diary: MyDiaryEntity) {
         contentLabel.text = diary.content
         dateLabel.text = diary.insertDate?.dateToString
-        statusImageView.image = UIImage(data: diary.statusImage ?? Data())
     }
 }

@@ -28,7 +28,6 @@ class ImageDisplayViewController: CommonViewController {
     /// 이미지 관리 객체
     let imageManager = PHImageManager()
     
-    var imageDataList = [Data]()
     
     /// 앨범 이미지 표시 화면을 닫습니다.
     /// - Parameter sender: Cancel 버튼
@@ -51,20 +50,35 @@ class ImageDisplayViewController: CommonViewController {
             imageManager.requestImage(for: target,
                                          targetSize: size,
                                          contentMode: .aspectFit,
-                                         options: nil) { [weak self] (image, _) in
-                guard let self = self else { return }
-                guard let image = image, let imageData = image.pngData() else { return }
+                                         options: nil) { (image, _) in
+                let document = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                let url = document.appendingPathComponent("\(index)").appendingPathExtension("png")
                 
-                self.imageDataList.append(imageData)
-                let userInfo = ["imageData": self.imageDataList]
-                NotificationCenter.default.post(name: .imageDidSelect, object: nil, userInfo: userInfo)
+                if let data = image?.pngData() {
+                    do {
+                        #if DEBUG
+                        print("document 디렉토리에 저장 성공!")
+                        #endif
+                        try data.write(to: url)
+                    } catch {
+                        #if DEBUG
+                        print(#function, "이미지 데이터 저장 시 에러 발생")
+                        #endif
+                    }
+                }
+                
+                let fileName = "\(index)"
+                let filePath = "png"
+                let userInfo = ["fileName": fileName, "filePath": filePath]
+                DataManager.shared.saveDiaryImages(url: url) {
+                    print("((((((")
+                    NotificationCenter.default.post(name: .imageDidSelect, object: nil, userInfo: userInfo)
+                }
             }
         }
         
         dismiss(animated: true, completion: nil)
     }
-    
-    
     
     
     func requestAuthorization() {

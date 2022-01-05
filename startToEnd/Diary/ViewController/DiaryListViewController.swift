@@ -53,6 +53,7 @@ class DiaryListViewController: CommonViewController {
         if let cell = sender as? UITableViewCell, let indexPath = listTableView.indexPath(for: cell) {
             if let vc = segue.destination as? DiaryDetailViewController {
                 vc.diary = DataManager.shared.myDiaryList[indexPath.row]
+                vc.target = DataManager.shared.myDiaryList[indexPath.row]
             }
         }
         

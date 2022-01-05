@@ -49,6 +49,7 @@
 		33FA84E63AB94DBB5A8BB090 /* Pods-startToEnd.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-startToEnd.debug.xcconfig"; path = "Target Support Files/Pods-startToEnd/Pods-startToEnd.debug.xcconfig"; sourceTree = "<group>"; };
 		F5064BE127647EBF006BE2E4 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		F51517A7275783B90024266F /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		F52BDABA2783DF550060307F /* startToEnd 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "startToEnd 2.xcdatamodel"; sourceTree = "<group>"; };
 		F534B3C327609B5100F3E24D /* SelectEmotionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectEmotionViewController.swift; sourceTree = "<group>"; };
 		F534B3C527609CFC00F3E24D /* EmotionCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmotionCollectionViewCell.swift; sourceTree = "<group>"; };
 		F534B3C727618E2000F3E24D /* ImageDisplayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDisplayViewController.swift; sourceTree = "<group>"; };
@@ -625,9 +626,10 @@
 		F5388E7F2751FBF5005426D1 /* startToEnd.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				F52BDABA2783DF550060307F /* startToEnd 2.xcdatamodel */,
 				F5388E802751FBF5005426D1 /* startToEnd.xcdatamodel */,
 			);
-			currentVersion = F5388E802751FBF5005426D1 /* startToEnd.xcdatamodel */;
+			currentVersion = F52BDABA2783DF550060307F /* startToEnd 2.xcdatamodel */;
 			path = startToEnd.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

@@ -39,8 +39,7 @@ class DiaryDetailViewController: CommonViewController {
     /// 첨부한 이미지 배열
     var imageList = [UIImage]()
     
-    /// PhotoGalleryEntity 객체
-    var photos = [PhotoGalleryEntity]()
+    var target: NSManagedObject?
 
 
     /// 뷰가 화면에 표시되기 직전에 호출됩니다.
@@ -59,10 +58,12 @@ class DiaryDetailViewController: CommonViewController {
         
         initializeData()
         
+        print(diary?.content, diary?.insertDate)
+        
         var token = NotificationCenter.default.addObserver(forName: .didUpdateEmotionImage, object: nil, queue: .main) { [weak self] (noti) in
             guard let newEmotion = noti.userInfo?["newImage"] as? UIImage else { return }
             
-            self?.diary?.statusImage = newEmotion.pngData()
+            
             self?.emotionBackgroungImageView.image = newEmotion
         }
         tokens.append(token)
@@ -70,12 +71,9 @@ class DiaryDetailViewController: CommonViewController {
         
         // 다이어리를 업데이트 합니다.
         if let diary = diary,
-            let content = contentTextView.text,
-            let data = diary.statusImage {
+           let content = contentTextView.text {
             DataManager.shared.updateDiary(entity: diary,
-                                           content: content,
-                                           statusImage: UIImage(data: data)?.pngData(),
-                                           image: nil) {
+                                           content: content) {
                 NotificationCenter.default.post(name: .didUpdateDiary, object: nil)
                 self.dismiss(animated: true, completion: nil)
             }
@@ -114,26 +112,23 @@ class DiaryDetailViewController: CommonViewController {
     }
     
     
-    /// 뷰가 계층에서 사라지기 전에 호출됩니다.
-    /// - Parameter animated: 애니메이션 여부
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-    }
-    
-    
     /// 필요한 데이터를 초기화합니다.
     func initializeData() {
         guard let diary = diary,
-              let defaultImageData = UIImage(named: "1")?.pngData(),
-              let image = UIImage(data: diary.image ?? Data()) else { return }
+              let statusImageUrl = URL(string: diary.statusImageUrl ?? "") else { return }
         
         dateLabelContainerView.applyBigRoundedRect()
-        emotionBackgroungImageView.image = UIImage(data: diary.statusImage ?? defaultImageData)
         createdDateLabel.text = "Date: \(diary.insertDate!.dateToString)"
         contentTextView.text = diary.content
         changeEmotionImageButton.setTitle("", for: .normal)
         listCollectionView.isHidden = imageList.count == 0
-        imageList.append(image)
+        
+        do {
+            let statusImageData = try Data(contentsOf: statusImageUrl)
+            emotionBackgroungImageView.image = UIImage(data: statusImageData)
+        } catch {
+            print("데이터 Initiailize 시 에러 발생했습니다!!!!")
+        }
     }
 }
 

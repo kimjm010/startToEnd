@@ -21,8 +21,7 @@ class DataManager {
     /// myDiary 배열
     var myDiaryList = [MyDiaryEntity]()
     
-    /// 이미지 배열
-    var photoList = [PhotoGalleryEntity]()
+    var imageUrlList = [PhotoEntity]()
 
     
     var mainContext: NSManagedObjectContext {

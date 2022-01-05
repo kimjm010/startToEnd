@@ -2,9 +2,9 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19461" systemVersion="20G165" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="MyDiary" representedClassName="MyDiaryEntity" syncable="YES" codeGenerationType="class">
         <attribute name="content" optional="YES" attributeType="String"/>
-        <attribute name="image" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
+        <attribute name="diaryImageUrl" optional="YES" attributeType="String"/>
         <attribute name="insertDate" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="statusImage" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
+        <attribute name="statusImageUrl" optional="YES" attributeType="String"/>
     </entity>
     <entity name="Todo" representedClassName="TodoEntity" syncable="YES" codeGenerationType="class">
         <attribute name="category" attributeType="String"/>
@@ -22,7 +22,7 @@
     </entity>
     <elements>
         <element name="MyDiary" positionX="-63" positionY="-18" width="128" height="89"/>
-        <element name="Todo" positionX="-63" positionY="9" width="128" height="164"/>
         <element name="TodoCategory" positionX="-63" positionY="63" width="128" height="44"/>
+        <element name="Todo" positionX="-54" positionY="-27" width="128" height="164"/>
     </elements>
 </model>

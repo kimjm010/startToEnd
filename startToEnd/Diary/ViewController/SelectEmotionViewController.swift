@@ -73,12 +73,30 @@ extension SelectEmotionViewController: UICollectionViewDelegate {
     ///   - indexPath: 선택한 셀의 indexPath
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
+        let document = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let url = document.appendingPathComponent("\(indexPath.item)").appendingPathExtension("png")
         let selectedImage = emotionList[indexPath.item]
         
-        let userInfo = ["newImage": selectedImage]
-        NotificationCenter.default.post(name: .didSelectEmotionImage, object: nil, userInfo: userInfo)
+        if let data = selectedImage.pngData() {
+            do {
+                try data.write(to: url)
+                #if DEBUG
+                print("감정 이미지 저장 성공!", #function)
+                #endif
+            } catch {
+                #if DEBUG
+                print("감정 이미지 저장 시 에러 발생!!")
+                #endif
+            }
+        }
         
-        NotificationCenter.default.post(name: .didUpdateEmotionImage, object: nil, userInfo: userInfo)
+        let fileName = "\(indexPath.item)"
+        let filePath = "png"
+        let userInfo = ["fileName": fileName, "filePath": filePath]
+        DataManager.shared.saveEmotionImage(url: url) {
+            print("((((((")
+            NotificationCenter.default.post(name: .didSelectEmotionImage, object: nil, userInfo: userInfo)
+        }
         dismiss(animated: true, completion: nil)
     }
 }

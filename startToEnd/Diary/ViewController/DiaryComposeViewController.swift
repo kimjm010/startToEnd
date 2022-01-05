@@ -63,6 +63,14 @@ class DiaryComposeViewController: CommonViewController {
     /// 첨부한 이미지 데이터 배열
     var attachedImageDataList = [Data]()
     
+    var target: NSManagedObject?
+    
+    var statusImage: UIImage?
+    
+    var statusImageUrl: URL?
+    
+    var diaryImageUrl: URL?
+    
     
     /// 일기 작성 화면을 닫습니다.
     /// - Parameter sender: Cancel 버튼
@@ -75,15 +83,17 @@ class DiaryComposeViewController: CommonViewController {
     /// - Parameter sender: Save 버튼
     @IBAction func saveDiary(_ sender: Any) {
         
-        guard let content = contentTextView.text, let status = emotionImageView.image else { return }
+        guard let content = contentTextView.text,
+              let statusImageUrl = statusImageUrl,
+              let diaryImageUrl = diaryImageUrl else { return }
         
         DataManager.shared.createDiary(content: content,
                                        insertDate: datePicker.date,
-                                       statusImage: status.pngData(),
-                                       image: imageList.first?.pngData()) {
+                                       statusImageUrl: statusImageUrl,
+                                       diaryImageUrl: diaryImageUrl) {
             NotificationCenter.default.post(name: .didInsertNewDiary, object: nil)
-            self.dismiss(animated: true, completion: nil)
         }
+        self.dismiss(animated: true, completion: nil)
     }
     
     
@@ -101,28 +111,62 @@ class DiaryComposeViewController: CommonViewController {
         super.viewDidLoad()
         
         initializeData()
-        DataManager.shared.fetchImageData()
         DataManager.shared.fetchDiary()
         imageCollectionView.reloadData()
         
+        if let target = target {
+            if let data = target.value(forKey: "diaryStatus.statusImage") as? Data {
+                statusImage = UIImage(data: data)
+            }
+        }
+        
         // 선택한 감정상태를 배경화면으로 지정합니다.
-        var token = NotificationCenter.default.addObserver(forName: .didSelectEmotionImage, object: nil, queue: .main) { [weak self] (noti) in
-            guard let emotion = noti.userInfo?["newImage"] as? UIImage else { return }
-            self?.emotionImageView.image = emotion
+        var token = NotificationCenter.default.addObserver(forName: .didSelectEmotionImage,
+                                                           object: nil,
+                                                           queue: .main) { [weak self] (noti) in
+            guard let fileName = noti.userInfo?["fileName"] as? String,
+                  let filePath = noti.userInfo?["filePath"] as? String else { return }
+            let documentUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let fileUrl = documentUrl.appendingPathComponent(fileName).appendingPathExtension(filePath)
+            self?.statusImageUrl = fileUrl
+            
+            do {
+                let imageData = try Data(contentsOf: fileUrl)
+                if let image = UIImage(data: imageData) {
+                    self?.emotionImageView.image = image
+                }
+            } catch {
+                #if DEBUG
+                print("감정 이미지 로드 실패!!")
+                #endif
+            }
         }
         tokens.append(token)
         
         
         // 선택한 이미지를 표시합니다.
-        token = NotificationCenter.default.addObserver(forName: .imageDidSelect, object: nil, queue: .main, using: { [weak self] (noti) in
-            guard let imageData = noti.userInfo?["imageData"] as? [Data] else { return }
-            self?.attachedImageDataList = imageData
+        token = NotificationCenter.default.addObserver(forName: .imageDidSelect,
+                                                       object: nil,
+                                                       queue: .main, using: { [weak self] (noti) in
+            guard let fileName = noti.userInfo?["fileName"] as? String,
+                  let filePath = noti.userInfo?["filePath"] as? String else { return }
+            let documentUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let fileUrl = documentUrl.appendingPathComponent(fileName).appendingPathExtension(filePath)
+            self?.diaryImageUrl = fileUrl
             
-            for num in 0...(imageData.count - 1) {
-                guard let image = UIImage(data: imageData[num]) else { return }
-                self?.imageList.append(image)
+            do {
+                let imageData = try Data(contentsOf: fileUrl)
+                if let image = UIImage(data: imageData) {
+                    self?.imageList.append(image)
+                }
+                #if DEBUG
+                print("이미지 로드 성공!!!!!$$$", #function)
+                #endif
+            } catch {
+                #if DEBUG
+                print("Error 발생했습니다!!!", #function)
+                #endif
             }
-            DataManager.shared.fetchDiary()
             self?.imageCollectionView.reloadData()
         })
         tokens.append(token)

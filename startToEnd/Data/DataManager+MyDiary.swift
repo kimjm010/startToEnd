@@ -14,16 +14,20 @@ extension DataManager {
     // CreateMyDiary
     func createDiary(content: String? = nil,
                      insertDate: Date? = Date(),
-                     statusImage: Data? = nil,
-                     image: Data? = nil,
+                     statusImageUrl: URL,
+                     diaryImageUrl: URL,
                      completion: (() -> ())? = nil) {
         mainContext.perform {
             let newDiary = MyDiaryEntity(context: self.mainContext)
             newDiary.content = content
             newDiary.insertDate = insertDate
-            newDiary.statusImage = statusImage
-            newDiary.image = image
             
+            let statusImageUrlStr = try? String(contentsOf: statusImageUrl)
+            newDiary.statusImageUrl = statusImageUrlStr
+            
+            let diaryImageUrlStr = try? String(contentsOf: diaryImageUrl)
+            newDiary.diaryImageUrl = diaryImageUrlStr
+
             self.saveMainContext()
             completion?()
         }
@@ -49,13 +53,9 @@ extension DataManager {
     // UpdateDiary
     func updateDiary(entity: MyDiaryEntity,
                      content: String?,
-                     statusImage: Data?,
-                     image: Data?,
                      completion: (() -> ())? = nil) {
         mainContext.perform {
             entity.content = content
-            entity.statusImage = statusImage
-            entity.image = image
             
             self.saveMainContext()
             completion?()
@@ -72,51 +72,26 @@ extension DataManager {
     }
     
     
-    /// 이미지를 저장합니다.
-    func saveImageData(imageData: Data,
-                       completion: (() -> ())? = nil) {
-        mainContext.perform {
-            let newData = PhotoGalleryEntity(context: self.mainContext)
-            newData.imageData = imageData
-            
-            self.saveMainContext()
-            completion?()
-        }
+    // Save EmotionImage
+    func saveEmotionImage(url: URL,
+                          completion: (() -> ())? = nil) {
+        let diary = MyDiaryEntity(context: self.mainContext)
+        let urlString = try? String(contentsOf: url)
+        diary.statusImageUrl = urlString
+        
+        self.saveMainContext()
+        completion?()
     }
     
     
-    /// 이미지를 Fetch합니다.
-    func fetchImageData() {
-        mainContext.performAndWait {
-            let request: NSFetchRequest<PhotoGalleryEntity> = PhotoGalleryEntity.fetchRequest()
-            
-            do {
-                photoList = try mainContext.fetch(request)
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
-    }
-    
-    
-    /// 이미지를 업데이트 합니다.
-    func updateImageData(entity: PhotoGalleryEntity,
-                         imageData: Data,
+    // Save DiaryImages
+    func saveDiaryImages(url: URL,
                          completion: (() -> ())? = nil) {
-        mainContext.perform {
-            entity.imageData = imageData
-            
-            self.saveMainContext()
-            completion?()
-        }
-    }
-    
-    
-    /// 이미지를 삭제합니다.
-    func deleteImageData(entity: PhotoGalleryEntity) {
-        mainContext.perform {
-            self.mainContext.delete(entity)
-            self.saveMainContext()
-        }
+        let diary = MyDiaryEntity(context: self.mainContext)
+        let urlString = try? String(contentsOf: url)
+        diary.diaryImageUrl = urlString
+        
+        self.saveMainContext()
+        completion?()
     }
 }
