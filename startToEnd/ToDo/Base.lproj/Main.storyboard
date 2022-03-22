@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="nWh-OK-i4a">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="nWh-OK-i4a">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -89,6 +89,7 @@
                                                     <buttonConfiguration key="configuration" style="plain"/>
                                                     <connections>
                                                         <action selector="toggleMarked:" destination="34X-hF-HWA" eventType="touchUpInside" id="FOd-KE-GKU"/>
+                                                        <action selector="toggleMarked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="PN1-2a-fvd"/>
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9zP-dH-3hB">
@@ -140,6 +141,9 @@
                                         <rect key="frame" x="8" y="7.5" width="398" height="30"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <outlet property="delegate" destination="BYZ-38-t0r" id="sM8-IN-Q5g"/>
+                                        </connections>
                                     </textField>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="teF-jI-Qpy">
                                         <rect key="frame" x="366" y="7.5" width="40" height="30"/>
@@ -211,13 +215,13 @@
                         </barButtonItem>
                         <barButtonItem title="dateLabel" id="Wad-ns-aDp">
                             <color key="tintColor" systemColor="labelColor"/>
-                            <connections>
-                                <action selector="cancelSelectedDate:" destination="BYZ-38-t0r" id="1Jz-SM-jDK"/>
-                            </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="BFe-wo-kP5"/>
                         <barButtonItem title="categoryLabel" id="4P4-qX-4dz">
                             <color key="tintColor" systemColor="labelColor"/>
+                            <connections>
+                                <action selector="cancelSelectedCategory:" destination="BYZ-38-t0r" id="XEJ-cN-8Dl"/>
+                            </connections>
                         </barButtonItem>
                         <barButtonItem title="Item" image="menu" id="KvU-Ir-1pD">
                             <connections>
@@ -324,6 +328,9 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="inz-rY-0x5" id="0aU-eM-0G7"/>
+                                </connections>
                             </textField>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="GCU-LW-OUm"/>
@@ -604,7 +611,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" style="inline" translatesAutoresizingMaskIntoConstraints="NO" id="k4O-UQ-8LR">
-                                <rect key="frame" x="11.5" y="266" width="391" height="364"/>
+                                <rect key="frame" x="39" y="286" width="336" height="324.5"/>
                             </datePicker>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="pLE-JG-ICz"/>

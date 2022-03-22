@@ -39,9 +39,7 @@ class DiaryDetailViewController: CommonViewController {
     /// 첨부한 이미지 배열
     var imageList = [UIImage]()
     
-    var target: NSManagedObject?
-
-
+    
     /// 뷰가 화면에 표시되기 직전에 호출됩니다.
     /// - Parameter animated: 애니메이션 여부
     override func viewWillAppear(_ animated: Bool) {
@@ -58,9 +56,9 @@ class DiaryDetailViewController: CommonViewController {
         
         initializeData()
         
-        print(diary?.content, diary?.insertDate)
-        
-        var token = NotificationCenter.default.addObserver(forName: .didUpdateEmotionImage, object: nil, queue: .main) { [weak self] (noti) in
+        var token = NotificationCenter.default.addObserver(forName: .didUpdateEmotionImage,
+                                                           object: nil,
+                                                           queue: .main) { [weak self] (noti) in
             guard let newEmotion = noti.userInfo?["newImage"] as? UIImage else { return }
             
             
@@ -81,8 +79,8 @@ class DiaryDetailViewController: CommonViewController {
         
         
         token = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification,
-                                               object: nil,
-                                               queue: .main) { [weak self] (noti) in
+                                                       object: nil,
+                                                       queue: .main) { [weak self] (noti) in
             guard let self = self else { return }
             
             if let frame = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
@@ -100,8 +98,8 @@ class DiaryDetailViewController: CommonViewController {
         
         
         token = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification,
-                                               object: nil,
-                                               queue: .main) { [weak self] (noti) in
+                                                       object: nil,
+                                                       queue: .main) { [weak self] (noti) in
             guard let self = self else { return }
             var inset = self.contentTextView.contentInset
             inset.bottom = 0
@@ -114,21 +112,17 @@ class DiaryDetailViewController: CommonViewController {
     
     /// 필요한 데이터를 초기화합니다.
     func initializeData() {
-        guard let diary = diary,
-              let statusImageUrl = URL(string: diary.statusImageUrl ?? "") else { return }
+        guard let diary = diary else { return }
+        
         
         dateLabelContainerView.applyBigRoundedRect()
-        createdDateLabel.text = "Date: \(diary.insertDate!.dateToString)"
-        contentTextView.text = diary.content
-        changeEmotionImageButton.setTitle("", for: .normal)
-        listCollectionView.isHidden = imageList.count == 0
-        
-        do {
-            let statusImageData = try Data(contentsOf: statusImageUrl)
-            emotionBackgroungImageView.image = UIImage(data: statusImageData)
-        } catch {
-            print("데이터 Initiailize 시 에러 발생했습니다!!!!")
+        if let diarydate = diary.insertDate {
+            createdDateLabel.text = "Date: \(diarydate.dateToString)"
         }
+        contentTextView.text = diary.content
+        changeEmotionImageButton.titleLabel?.text = ""
+        changeEmotionImageButton.setTitle("", for: .selected)
+        listCollectionView.isHidden = imageList.count == 0
     }
 }
 
@@ -178,8 +172,7 @@ extension DiaryDetailViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCollectionViewCell", for: indexPath) as! ImageCollectionViewCell
         
-        let target = imageList[indexPath.item]
-        cell.configure(image: target)
+        cell.configure(diary: diary)
         return cell
     }
 }

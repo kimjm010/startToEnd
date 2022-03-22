@@ -16,6 +16,15 @@ class CreateNewCategoryViewController: UIViewController {
     
     
     /// 새로운 카테고리를 추가합니다.
+    /// - Parameter category: 추가할 카테고리 이름
+    private func createNewCategory(category: String) {
+        DataManager.shared.createCategory(category: category) {
+            NotificationCenter.default.post(name: .newCategoryDidInsert, object: nil)
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
+    
+    /// 새로운 카테고리를 추가합니다.
     /// - Parameter sender: save버튼
     @IBAction func insertNewCategory(_ sender: Any) {
         
@@ -24,11 +33,7 @@ class CreateNewCategoryViewController: UIViewController {
             return
         }
         
-        // 카테고리를 추가합니다.
-        DataManager.shared.createCategory(category: newCategory) {
-            NotificationCenter.default.post(name: .newCategoryDidInsert, object: nil)
-            self.navigationController?.popViewController(animated: true)
-        }
+        createNewCategory(category: newCategory)
     }
     
     
@@ -36,5 +41,23 @@ class CreateNewCategoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         composeNewCategoryTextField.becomeFirstResponder()
+    }
+}
+
+
+
+
+extension CreateNewCategoryViewController: UITextFieldDelegate {
+    
+    /// Return버튼을 눌러 새로운 카테고리를 저장합니다.
+    /// - Parameter textField: composeNewCategoryTextField
+    /// - Returns: 작업 실행 여부를 결정하는 Bool 값
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField.hasText {
+            guard let newCategory = textField.text else { return false }
+            createNewCategory(category: newCategory)
+        }
+        
+        return true
     }
 }

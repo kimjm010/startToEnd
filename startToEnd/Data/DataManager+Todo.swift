@@ -82,7 +82,7 @@ extension DataManager {
             do {
                 todoList = try mainContext.fetch(request)
             } catch {
-                print(error.localizedDescription)
+                print(error.localizedDescription, "1")
             }
         }
     }
@@ -98,7 +98,7 @@ extension DataManager {
             do {
                 categoryList = try mainContext.fetch(request)
             } catch {
-                print(error.localizedDescription)
+                print(error.localizedDescription, "2")
             }
         }
     }

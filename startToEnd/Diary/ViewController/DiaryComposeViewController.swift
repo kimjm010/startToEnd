@@ -51,7 +51,7 @@ class DiaryComposeViewController: CommonViewController {
     
     /// 일기 정보 저장 속성
     var diary: MyDiaryEntity?
-
+    
     /// 일기 목록을 확인하는 속성
     ///
     /// tag값에 따라 다른 배경의 일기작성 화면을 표시합니다.
@@ -63,14 +63,11 @@ class DiaryComposeViewController: CommonViewController {
     /// 첨부한 이미지 데이터 배열
     var attachedImageDataList = [Data]()
     
-    var target: NSManagedObject?
-    
     var statusImage: UIImage?
     
-    var statusImageUrl: URL?
+    var statusImageData: Data?
     
-    var diaryImageUrl: URL?
-    
+    var diaryImageData: Data?
     
     /// 일기 작성 화면을 닫습니다.
     /// - Parameter sender: Cancel 버튼
@@ -83,16 +80,15 @@ class DiaryComposeViewController: CommonViewController {
     /// - Parameter sender: Save 버튼
     @IBAction func saveDiary(_ sender: Any) {
         
-        guard let content = contentTextView.text,
-              let statusImageUrl = statusImageUrl,
-              let diaryImageUrl = diaryImageUrl else { return }
+        guard let content = contentTextView.text else { return }
         
-        DataManager.shared.createDiary(content: content,
-                                       insertDate: datePicker.date,
-                                       statusImageUrl: statusImageUrl,
-                                       diaryImageUrl: diaryImageUrl) {
+        DataManager.shared.createMyDiary(content: content,
+                                         insertDate: datePicker.date,
+                                         statusImageData: statusImageData,
+                                         diaryImageData: diaryImageData) {
             NotificationCenter.default.post(name: .didInsertNewDiary, object: nil)
         }
+        
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -114,31 +110,15 @@ class DiaryComposeViewController: CommonViewController {
         DataManager.shared.fetchDiary()
         imageCollectionView.reloadData()
         
-        if let target = target {
-            if let data = target.value(forKey: "diaryStatus.statusImage") as? Data {
-                statusImage = UIImage(data: data)
-            }
-        }
         
         // 선택한 감정상태를 배경화면으로 지정합니다.
         var token = NotificationCenter.default.addObserver(forName: .didSelectEmotionImage,
                                                            object: nil,
                                                            queue: .main) { [weak self] (noti) in
-            guard let fileName = noti.userInfo?["fileName"] as? String,
-                  let filePath = noti.userInfo?["filePath"] as? String else { return }
-            let documentUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let fileUrl = documentUrl.appendingPathComponent(fileName).appendingPathExtension(filePath)
-            self?.statusImageUrl = fileUrl
-            
-            do {
-                let imageData = try Data(contentsOf: fileUrl)
-                if let image = UIImage(data: imageData) {
-                    self?.emotionImageView.image = image
-                }
-            } catch {
-                #if DEBUG
-                print("감정 이미지 로드 실패!!")
-                #endif
+            guard let emotionImage = noti.userInfo?["emotion"] as? UIImage else { return }
+            let emotionImageData = emotionImage.pngData()
+            DataManager.shared.saveEmoImage(imageData: emotionImageData) {
+                self?.emotionImageView.image = emotionImage
             }
         }
         tokens.append(token)
@@ -148,30 +128,21 @@ class DiaryComposeViewController: CommonViewController {
         token = NotificationCenter.default.addObserver(forName: .imageDidSelect,
                                                        object: nil,
                                                        queue: .main, using: { [weak self] (noti) in
-            guard let fileName = noti.userInfo?["fileName"] as? String,
-                  let filePath = noti.userInfo?["filePath"] as? String else { return }
-            let documentUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let fileUrl = documentUrl.appendingPathComponent(fileName).appendingPathExtension(filePath)
-            self?.diaryImageUrl = fileUrl
+            guard let self = self else { return }
+            guard let diaryImages = noti.userInfo?["image"] as? [UIImage] else { return }
+            self.imageList.append(contentsOf: diaryImages)
             
-            do {
-                let imageData = try Data(contentsOf: fileUrl)
-                if let image = UIImage(data: imageData) {
-                    self?.imageList.append(image)
+            for num in 0...self.imageList.count {
+                let singleImageData = self.imageList[num].pngData()
+                DataManager.shared.saveDiaryImage(data: singleImageData) {
+                    print(#function, "^^^^여기서 뭘해야하나")
                 }
-                #if DEBUG
-                print("이미지 로드 성공!!!!!$$$", #function)
-                #endif
-            } catch {
-                #if DEBUG
-                print("Error 발생했습니다!!!", #function)
-                #endif
             }
-            self?.imageCollectionView.reloadData()
         })
         tokens.append(token)
         
         
+        // contentTextView 키보드를 표시한만큼 높이를 조정합니다.
         token = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { [weak self] (noti) in
             guard let self = self else { return }
             guard let frame = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
@@ -187,14 +158,13 @@ class DiaryComposeViewController: CommonViewController {
         tokens.append(token)
         
         
+        // contentTextView 키보드를 숨긴만큼 높이를 조정합니다.
         token = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { [weak self] _ in
             guard let self = self else { return }
             var inset = self.contentTextView.contentInset
             inset.bottom = 0
             self.contentTextView.contentInset = inset
             self.contentTextView.verticalScrollIndicatorInsets = inset
-            
-            
         }
         tokens.append(token)
     }
@@ -293,7 +263,7 @@ extension DiaryComposeViewController: UICollectionViewDataSource {
 
 
 
- 
+
 extension DiaryComposeViewController: UICollectionViewDelegate {
     
     /// 이미지 셀을 선택했을 때의 동작을 설정합니다.

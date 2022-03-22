@@ -46,9 +46,6 @@ class ListTableViewCell: UITableViewCell {
     /// updated여부
     var updated: Bool = false
     
-    /// 선택된 Todo객체
-    var selectedTodo: TodoEntity?
-    
     /// 옵저버 제거를 위해 토큰을 담는 배열
     var tokens = [NSObjectProtocol]()
     

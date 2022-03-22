@@ -20,4 +20,10 @@ class ImageCollectionViewCell: UICollectionViewCell {
     func configure(image: UIImage) {
         attachedImageView.image = image
     }
+    
+    func configure(diary: MyDiaryEntity?) {
+        if let diaryImageData = diary?.diaryImageData {
+            attachedImageView.image = UIImage(data: diaryImageData)
+        }
+    }
 }

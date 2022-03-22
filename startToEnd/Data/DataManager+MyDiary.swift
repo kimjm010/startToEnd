@@ -12,22 +12,24 @@ import UIKit
 extension DataManager {
     
     // CreateMyDiary
-    func createDiary(content: String? = nil,
-                     insertDate: Date? = Date(),
-                     statusImageUrl: URL,
-                     diaryImageUrl: URL,
-                     completion: (() -> ())? = nil) {
+    func createMyDiary(content: String? = nil,
+                       insertDate: Date? = Date(),
+                       statusImageData: Data?,
+                       diaryImageData: Data?,
+                       completion: (() -> ())? = nil) {
         mainContext.perform {
             let newDiary = MyDiaryEntity(context: self.mainContext)
             newDiary.content = content
             newDiary.insertDate = insertDate
             
-            let statusImageUrlStr = try? String(contentsOf: statusImageUrl)
-            newDiary.statusImageUrl = statusImageUrlStr
+            if let statusImageData = statusImageData {
+                newDiary.statusImageData = statusImageData
+            }
             
-            let diaryImageUrlStr = try? String(contentsOf: diaryImageUrl)
-            newDiary.diaryImageUrl = diaryImageUrlStr
-
+            if let diaryImageData = diaryImageData {
+                newDiary.diaryImageData = diaryImageData
+            }
+            
             self.saveMainContext()
             completion?()
         }
@@ -44,7 +46,7 @@ extension DataManager {
             do {
                 myDiaryList = try mainContext.fetch(request)
             } catch {
-                print(error.localizedDescription)
+                print(error.localizedDescription, "3")
             }
         }
     }
@@ -73,11 +75,9 @@ extension DataManager {
     
     
     // Save EmotionImage
-    func saveEmotionImage(url: URL,
-                          completion: (() -> ())? = nil) {
+    func saveEmoImage(imageData: Data?, completion: (() -> ())? = nil) {
         let diary = MyDiaryEntity(context: self.mainContext)
-        let urlString = try? String(contentsOf: url)
-        diary.statusImageUrl = urlString
+        diary.statusImageData = imageData
         
         self.saveMainContext()
         completion?()
@@ -85,11 +85,9 @@ extension DataManager {
     
     
     // Save DiaryImages
-    func saveDiaryImages(url: URL,
-                         completion: (() -> ())? = nil) {
+    func saveDiaryImage(data: Data?, completion: (() -> ())? = nil) {
         let diary = MyDiaryEntity(context: self.mainContext)
-        let urlString = try? String(contentsOf: url)
-        diary.diaryImageUrl = urlString
+        diary.diaryImageData = data
         
         self.saveMainContext()
         completion?()

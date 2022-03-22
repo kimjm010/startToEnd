@@ -66,7 +66,6 @@ class DetailViewController: CommonViewController {
         guard let selectedTodo = selectedTodo else { return }
         
         markedImageView.isHighlighted = !(selectedTodo.isMarked) ? true : false
-        selectedTodo.isMarked = markedImageView.isHighlighted ? true : false
     }
     
     
@@ -105,8 +104,11 @@ class DetailViewController: CommonViewController {
                                           isMarked: selectedTodo.isMarked,
                                           reminder: selectedTodo.reminder,
                                           isRepeat: selectedTodo.isRepeat,
-                                          memo: memo) {
-                NotificationCenter.default.post(name: .updateToDo, object: nil)
+                                          memo: memo) { [weak self] in
+                guard let self = self else { return }
+                let userInfo = ["selectedTodo": selectedTodo]
+                NotificationCenter.default.post(name: .updateToDo, object: nil, userInfo: userInfo)
+                selectedTodo.isMarked = self.markedImageView.isHighlighted ? true : false
             }
             
             if selectedTodo.reminder {

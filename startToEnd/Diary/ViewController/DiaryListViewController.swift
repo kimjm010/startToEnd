@@ -53,7 +53,6 @@ class DiaryListViewController: CommonViewController {
         if let cell = sender as? UITableViewCell, let indexPath = listTableView.indexPath(for: cell) {
             if let vc = segue.destination as? DiaryDetailViewController {
                 vc.diary = DataManager.shared.myDiaryList[indexPath.row]
-                vc.target = DataManager.shared.myDiaryList[indexPath.row]
             }
         }
         
@@ -117,8 +116,11 @@ class DiaryListViewController: CommonViewController {
         DataManager.shared.fetchDiary()
         listTableView.reloadData()
         
-        // 일기를 추가합니다.
-        var token = NotificationCenter.default.addObserver(forName: .didInsertNewDiary, object: nil, queue: .main) { [weak self] _ in
+        
+        // 새로운 diary를 추가합니다.
+        var token = NotificationCenter.default.addObserver(forName: .didInsertNewDiary,
+                                                           object: nil,
+                                                           queue: .main) { [weak self] _ in
             DataManager.shared.fetchDiary()
             self?.listTableView.reloadData()
         }
@@ -126,7 +128,9 @@ class DiaryListViewController: CommonViewController {
  
         
         // 작성된 일기를 업데이트 합니다.
-        token = NotificationCenter.default.addObserver(forName: .didUpdateDiary, object: nil, queue: .main) { [weak self] _ in
+        token = NotificationCenter.default.addObserver(forName: .didUpdateDiary,
+                                                       object: nil,
+                                                       queue: .main) { [weak self] _ in
             DataManager.shared.fetchDiary()
             self?.listTableView.reloadData()
         }
@@ -138,6 +142,7 @@ class DiaryListViewController: CommonViewController {
     func initializeData() {
         composeListContainerView.isHidden = true
         showComposeMenuButton.setTitle("", for: .normal)
+        showComposeMenuButton.titleLabel?.text = ""
     }
     
     

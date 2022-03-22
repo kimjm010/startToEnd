@@ -81,6 +81,8 @@ class ViewController: CommonViewController {
     /// 선택된 Todo
     var selectedTodo: TodoEntity?
     
+    var selectedDate: Date = Date()
+    
     
     /// 곧 실행될 뷰 컨트롤러를 준비합니다.
     ///
@@ -107,15 +109,31 @@ class ViewController: CommonViewController {
     }
     
     
-    /// 선택한 날짜를 취소합니다.
-    /// - Parameter sender: 날짜 버튼
-    @IBAction func cancelSelectedDate(_ sender: Any) {
-        cancelSelectedCalendarButton.title = nil
+    /// 선택한 카테고리를 취소합니다.
+    /// - Parameter sender: cancelSelectedCategoryButton
+    @IBAction func cancelSelectedCategory(_ sender: UIBarButtonItem) {
+        cancelSelectedCategoryButton.title = nil
+        guard let selectedCategory = selectedCategory else { return }
+        DataManager.shared.deleteCategory(entity: selectedCategory)
+    }
+    
+    
+    /// 카테고리의 isMarked을 토글합니다.
+    /// - Parameter sender: isMarked 버튼
+    @IBAction func toggleMarked(_ sender: Any) {
+        isMarked = isMarked ? true : false
+        if let selectedTodo = selectedTodo {
+            DataManager.shared.updateIsMarked(entity: selectedTodo, ismarked: isMarked) { [weak self] in
+                guard let self = self else { return }
+                DataManager.shared.fetchTodo()
+                self.toDoListTableView.reloadData()
+            }
+        }
     }
     
     
     /// 카테고리를 선택합니다.
-    /// - Parameter sender: 카테고리 버튼
+    /// - Parameter sender: selectCategoryButton
     @IBAction func showCategory(_ sender: Any) {
         cancelSelectedCategoryButton.title = nil
     }
@@ -129,28 +147,22 @@ class ViewController: CommonViewController {
     
     
     /// todo를 저장합니다.
-    /// - Parameter sender: 입력 버튼
+    /// - Parameter sender: composeTodoButton
     @IBAction func saveTodo(_ sender: Any) {
+        #if DEBUG
+        print(#function)
+        #endif
         
         guard let content = toDoTextField.text, content.count > 0 else {
             alertNoText(title: "알림", message: "오늘의 계획을 입력해주세요 :)", handler: nil)
             return
         }
         
-        guard let category = selectedCategory?.category else { return }
-        DataManager.shared.createTodo(content: content,
-                                      category: category,
-                                      insertDate: Date(),
-                                      notiDate: nil,
-                                      isMarked: false,
-                                      isCompleted: false,
-                                      reminder: false,
-                                      isRepeat: false,
-                                      memo: nil) {
-            NotificationCenter.default.post(name: .didInsertNewTodo, object: nil)
-            self.toDoTextField.text = nil
-            self.cancelSelectedCategoryButton.title = nil
+        guard let category = selectedCategory?.category else {
+            alertNoText(title: "알림!", message: "카테고리를 선택해주세요 :)", handler: nil)
+            return
         }
+        saveTodoList(content: content, category: category, inserDate: selectedDate)
     }
     
     
@@ -209,6 +221,7 @@ class ViewController: CommonViewController {
             }
             
             self?.cancelSelectedCalendarButton.title = newDate.dateToString
+            self?.selectedDate = newDate
         }
         tokens.append(token)
         
@@ -227,8 +240,9 @@ class ViewController: CommonViewController {
         token = NotificationCenter.default.addObserver(forName: .updateToDo,
                                                        object: nil,
                                                        queue: .main) { [weak self] (noti) in
-            guard let updated = noti.userInfo?["updated"] as? Bool else { return }
-            self?.isMarked = updated
+            guard let updatedSelectedTodo = noti.userInfo?["selectedTodo"] as? TodoEntity else { return }
+            print(updatedSelectedTodo.isMarked, "^^^^")
+            self?.isMarked = updatedSelectedTodo.isMarked
             DataManager.shared.fetchTodo()
             self?.toDoListTableView.reloadData()
         }
@@ -276,6 +290,43 @@ class ViewController: CommonViewController {
         }
         
         toDoListTableView.reloadData()
+    }
+    
+    
+    /// Todo 저장 메소드입니다.
+    /// - Parameters:
+    ///   - content: todo 내용
+    ///   - category: todo 카테고리
+    ///   - inserDate: todo 날짜
+    ///   - notiDate: todo 알림 날짜
+    ///   - isMarked: todo isMarked 여부
+    ///   - isCompleted: todo 항목 완료 여부
+    ///   - reminder: todo 알림 여부
+    ///   - isRepeat: todo 알림 반복 여부
+    ///   - memo: todo 메모 내용
+    private func saveTodoList(content: String,
+                      category: String,
+                      inserDate: Date,
+                      notiDate: Date? = nil,
+                      isMarked: Bool = false,
+                      isCompleted: Bool = false,
+                      reminder: Bool = false,
+                      isRepeat: Bool = false,
+                      memo: String? = nil) {
+        DataManager.shared.createTodo(content: content,
+                                      category: category,
+                                      insertDate: inserDate,
+                                      notiDate: notiDate,
+                                      isMarked: isMarked,
+                                      isCompleted: isCompleted,
+                                      reminder: reminder,
+                                      isRepeat: isRepeat,
+                                      memo: memo) {
+            NotificationCenter.default.post(name: .didInsertNewTodo, object: nil)
+            self.toDoTextField.text = nil
+            self.cancelSelectedCategoryButton.title = nil
+            self.cancelSelectedCalendarButton.title = Date().dateToString
+        }
     }
 }
 
@@ -347,7 +398,7 @@ extension ViewController: UITableViewDelegate {
     ///   - indexPath: 선택된 셀의 indexPath
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         toDoListTableView.deselectRow(at: indexPath, animated: true)
-        print(#function, "^^", DataManager.shared.todoList[indexPath.row])
+        //print(#function, "^^", DataManager.shared.todoList[indexPath.row])
     }
     
     
@@ -368,7 +419,7 @@ extension ViewController: UITableViewDelegate {
     ///   - cell: todo 셀
     ///   - indexPath: todo 셀의 indexPath
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        print(#function, "&&")
+        //print(#function, "&&")
         let target = DataManager.shared.todoList[indexPath.row]
         guard let cell = cell as? ListTableViewCell else { return }
         
@@ -382,7 +433,7 @@ extension ViewController: UITableViewDelegate {
     ///   - cell: todo 셀
     ///   - indexPath: todo셀의 indexPath
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        print(#function, "**")
+        //print(#function, "**")
     }
     
 }
@@ -451,5 +502,21 @@ extension ViewController: UITextFieldDelegate {
     /// - Parameter textField: toDoTextField
     func textFieldDidEndEditing(_ textField: UITextField) {
         selectedTodo?.content = textField.text
+    }
+    
+    
+    /// Return키로 Todo를 추가합니다.
+    /// - Parameter textField: toDoTextField
+    /// - Returns: 작업 실행 여부를 결정하는 Bool 값
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        print(#function)
+        guard let todo = textField.text, todo.count > 0 else { return false }
+        
+        
+        if let selectedCategory = selectedCategory?.category {
+            saveTodoList(content: todo, category: selectedCategory, inserDate: selectedDate)
+        }
+        
+        return true
     }
 }
