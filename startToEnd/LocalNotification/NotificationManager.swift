@@ -23,7 +23,7 @@ class NotificationManager {
     /// Notification 권한을 요청합니다.
     /// - Parameter completion: completion 핸들러
     func requestAuthorization(completion: @escaping (Bool) -> Void) {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]){ (granted, error) in
+        UNUserNotificationCenter.current().requestAuthorization(options: [.sound, .alert, .badge]){ (granted, error) in
             self.fetchNotificationSettings()
             completion(granted)
         }

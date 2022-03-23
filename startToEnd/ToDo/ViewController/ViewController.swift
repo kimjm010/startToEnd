@@ -113,8 +113,9 @@ class ViewController: CommonViewController {
     /// - Parameter sender: cancelSelectedCategoryButton
     @IBAction func cancelSelectedCategory(_ sender: UIBarButtonItem) {
         cancelSelectedCategoryButton.title = nil
-        guard let selectedCategory = selectedCategory else { return }
-        DataManager.shared.deleteCategory(entity: selectedCategory)
+        if let selectedCategory = selectedCategory {
+            DataManager.shared.cancelCategory(entity: selectedCategory, category: nil, completion: nil)
+        }
     }
     
     
@@ -162,6 +163,7 @@ class ViewController: CommonViewController {
             alertNoText(title: "알림!", message: "카테고리를 선택해주세요 :)", handler: nil)
             return
         }
+        
         saveTodoList(content: content, category: category, inserDate: selectedDate)
     }
     
@@ -241,7 +243,6 @@ class ViewController: CommonViewController {
                                                        object: nil,
                                                        queue: .main) { [weak self] (noti) in
             guard let updatedSelectedTodo = noti.userInfo?["selectedTodo"] as? TodoEntity else { return }
-            print(updatedSelectedTodo.isMarked, "^^^^")
             self?.isMarked = updatedSelectedTodo.isMarked
             DataManager.shared.fetchTodo()
             self?.toDoListTableView.reloadData()
@@ -509,14 +510,17 @@ extension ViewController: UITextFieldDelegate {
     /// - Parameter textField: toDoTextField
     /// - Returns: 작업 실행 여부를 결정하는 Bool 값
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        print(#function)
-        guard let todo = textField.text, todo.count > 0 else { return false }
-        
-        
-        if let selectedCategory = selectedCategory?.category {
-            saveTodoList(content: todo, category: selectedCategory, inserDate: selectedDate)
+        guard let todo = textField.text, todo.count > 0 else {
+            alertNoText(title: "알림", message: "오늘의 계획을 입력해주세요 :)", handler: nil)
+            return false
         }
         
+        guard let selectedCategory = selectedCategory?.category else {
+            alertNoText(title: "알림!", message: "카테고리를 선택해주세요 :)", handler: nil)
+            return false
+        }
+        
+        saveTodoList(content: todo, category: selectedCategory, inserDate: selectedDate)
         return true
     }
 }

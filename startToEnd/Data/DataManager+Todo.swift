@@ -64,7 +64,25 @@ extension DataManager {
             let newCategory = TodoCategoryEntity(context: self.mainContext)
             newCategory.category = category
             
-            self.categoryList.insert(newCategory, at: 0)
+            //self.categoryList.insert(newCategory, at: 0)
+            self.categoryList.append(newCategory)
+            
+            self.saveMainContext()
+            completion?()
+        }
+    }
+
+    
+    /// 선택한 Todo Category를 취소합니다.
+    /// - Parameters:
+    ///   - category: 선택한 Todo Category
+    ///   - completion: 취소 후 실행할 작업
+    func updateCategory(category: String? = nil, completion: (() -> ())? = nil) {
+        mainContext.perform {
+            let newCategory = TodoCategoryEntity(context: self.mainContext)
+            newCategory.category = nil
+            
+            self.categoryList.removeLast()
             
             self.saveMainContext()
             completion?()
@@ -135,6 +153,17 @@ extension DataManager {
             entity.isRepeat = isRepeat
             entity.memo = memo
             
+            
+            self.saveMainContext()
+            completion?()
+        }
+    }
+    
+    func cancelCategory(entity: TodoCategoryEntity,
+                                category: String?,
+                                completion: (() -> ())? = nil) {
+        mainContext.perform {
+            entity.category = category
             
             self.saveMainContext()
             completion?()

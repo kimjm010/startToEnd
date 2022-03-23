@@ -37,11 +37,11 @@ class DetailViewController: CommonViewController {
     /// 알림 반복 선택 스위치
     @IBOutlet weak var repeatNotiSwitch: UISwitch!
     
-    /// 알림 기한 레이블
-    @IBOutlet weak var dueDateLabel: UILabel!
-    
     /// 알림 일정 지정 속성
     @IBOutlet weak var datePicker: UIDatePicker!
+    
+    /// 알림 기한 레이블
+    @IBOutlet weak var dueDateLabel: UILabel!
     
     /// 알림 설정 switch
     @IBOutlet weak var notiSwitch: UISwitch!
